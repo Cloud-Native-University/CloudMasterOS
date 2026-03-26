@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "1": {
+      "title": "Provisionamiento Eficiente",
+      "module": "KUBERNETES FUNDAMENTALS",
+      "content": "La fintech 'CloudNexus' está migrando a K8s. Tu primer reto es desplegar su servidor de landing page usando la mínima unidad de ejecución, asegurando que no consuma más de 128Mi de memoria para evitar sobrecostes.",
+      "goal": "Crear un Pod llamado 'nginx-pod' con un límite de memoria de 128Mi.",
+      "code": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: nginx-pod\n  labels:\n    app: web-server\spec:\n  containers:\n  - name: nginx-container\n    image: nginx:1.25-alpine\n    resources:\n      limits:\n        memory: '128Mi'\n        cpu: '500m'"
+    }
+  }
+}

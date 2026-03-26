@@ -1,0 +1,263 @@
+{
+  "tasks": {
+    "1": {
+      "title": "El Amanecer del Cluster: Provisionamiento Eficiente",
+      "module": "Caso: CloudNexus",
+      "content": "La fintech 'CloudNexus' está migrando su landing page a K8s tras el colapso de su servidor único. Tu primer reto es desplegar el servidor asegurando que no consuma recursos excesivos que afecten la rentabilidad (FinOps).",
+      "goal": "Crear un Pod llamado 'web-legacy' con la imagen 'nginx:alpine' y etiquetas de arquitectura.",
+      "code": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: \n  labels:\n    tier: \n    app: \nspec:\n  containers:\n  - name: \n    image: \n    resources:\n      limits:\n        memory: \n        cpu: \n      requests:\n        memory: \n        cpu: ",
+      "steps": [
+        {
+          "t": "Desplegar",
+          "c": "kubectl apply -f primer-paso.yaml"
+        }
+      ]
+    },
+    "2": {
+      "title": "Diagnóstico y Observabilidad Inicial",
+      "module": "Caso: CloudNexus",
+      "content": "El equipo de QA reporta que el pod de la landing page no parece estar sirviendo contenido. Como arquitecto, debes usar herramientas de introspección para verificar la salud del despliegue.",
+      "goal": "Extraer logs y describir el estado del pod 'web-legacy'.",
+      "steps": [
+        {
+          "t": "Inspeccionar Logs",
+          "c": "kubectl logs [pod-name]"
+        },
+        {
+          "t": "Estado Detallado",
+          "c": "kubectl describe pod [pod-name]"
+        }
+      ]
+    },
+    "3": {
+      "title": "Sidecar de Logging para SRE",
+      "module": "Caso: CloudNexus",
+      "content": "El equipo de SRE exige visibilidad sobre los procesos internos. Necesitamos implementar un patrón 'Sidecar' para procesar logs sin alterar la imagen principal del frontend.",
+      "goal": "Crear un Pod 'logger-system' con un contenedor principal y uno de soporte (sidecar).",
+      "code": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: \nspec:\n  containers:\n  - name: \n    image: \n  - name: \n    image: \n    command: ",
+      "steps": [
+        {
+          "t": "Verificar Multicontenedor",
+          "c": "kubectl get pod logger-system"
+        }
+      ]
+    },
+    "4": {
+      "title": "Auto-recuperación con Liveness Probes",
+      "module": "Caso: CloudNexus",
+      "content": "Para garantizar la alta disponibilidad, el sistema debe ser capaz de detectar si el proceso de Nginx se bloquea y reiniciarlo automáticamente sin intervención humana.",
+      "goal": "Configurar un Liveness Probe en el puerto 80 del pod 'self-healing-app'.",
+      "code": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: \nspec:\n  containers:\n  - name: \n    image: \n    livenessProbe:\n      httpGet:\n        path: \n        port: \n      initialDelaySeconds: \n      periodSeconds: ",
+      "steps": [
+        {
+          "t": "Habilitar Salud",
+          "c": "kubectl apply -f liveness.yaml"
+        }
+      ]
+    },
+    "5": {
+      "title": "Persistencia de Datos Críticos",
+      "module": "Caso: DataSphere",
+      "content": "'DataSphere' requiere que los logs analíticos sobrevivan a cualquier reinicio del nodo o del pod. Debes orquestar el almacenamiento persistente para su volumen de datos.",
+      "goal": "Configurar un PersistentVolumeClaim (PVC) de 1Gi para la aplicación.",
+      "code": "apiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: \nspec:\n  accessModes:\n    - \n  resources:\n    requests:\n      storage: ",
+      "steps": [
+        {
+          "t": "Validar PVC",
+          "c": "kubectl get pvc"
+        }
+      ]
+    },
+    "6": {
+      "title": "Ruteo de Capa 7 (Ingress)",
+      "module": "Caso: DataSphere",
+      "content": "Los analistas de DataSphere necesitan acceder al dashboard vía 'dashboard.datasphere.io'. Debes configurar el controlador de tráfico para mapear este dominio al servicio interno.",
+      "goal": "Crear un recurso Ingress que exponga el servicio 'dashboard-svc'.",
+      "code": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: \nspec:\n  rules:\n  - host: \n    http:\n      paths:\n      - path: \n        pathType: \n        backend:\n          service:\n            name: \n            port:\n              number: ",
+      "steps": [
+        {
+          "t": "Verificar Ingress",
+          "c": "kubectl get ingress"
+        }
+      ]
+    },
+    "7": {
+      "title": "Configuración Dinámica Decoupled",
+      "module": "Caso: GlobalCompute",
+      "content": "'GlobalCompute' quiere cambiar el mensaje de bienvenida dinámicamente según el entorno. Debes inyectar esta configuración externamente sin tocar la imagen de Docker.",
+      "goal": "Crear un ConfigMap y montarlo como variable de entorno 'WELCOME_MSG'.",
+      "code": "apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: \ndata:\n  <KEY>: \"<VALUE>\"",
+      "steps": [
+        {
+          "t": "Inyectar Configuración",
+          "c": "kubectl apply -f configmap.yaml"
+        }
+      ]
+    },
+    "8": {
+      "title": "Hardening de Secretos",
+      "module": "Caso: CloudNexus",
+      "content": "Las API Keys de la pasarela de pagos son sensibles. No pueden estar en texto plano en los manifiestos de despliegue. Debes usar objetos de seguridad nativos.",
+      "goal": "Crear un Secret para la clave 'PAYMENT_GATEWAY_KEY'.",
+      "steps": [
+        {
+          "t": "Verificar Secreto",
+          "c": "kubectl get secret"
+        }
+      ]
+    },
+    "9": {
+      "title": "Multi-tenancy y Aislamiento",
+      "module": "Caso: GlobalCompute",
+      "content": "Debido al crecimiento de la empresa, el equipo de 'Marketing' necesita su propio espacio de nombres para evitar conflictos con el equipo de 'Sistemas'.",
+      "goal": "Crear el Namespace 'marketing-dept' y desplegar un pod allí.",
+      "steps": [
+        {
+          "t": "Crear Namespace",
+          "c": "kubectl create ns marketing-dept"
+        }
+      ]
+    },
+    "10": {
+      "title": "Identidad de Sistema (ServiceAccounts)",
+      "module": "Caso: SafeNet",
+      "content": "En 'SafeNet', la seguridad es la máxima prioridad. El pod de auditoría necesita una identidad propia para interactuar con la API de Kubernetes de forma restringida.",
+      "goal": "Crear un ServiceAccount llamado 'auditor-sa'.",
+      "steps": [
+        {
+          "t": "Validar Identidad",
+          "c": "kubectl get sa auditor-sa"
+        }
+      ]
+    },
+    "11": {
+      "title": "Despliegue de Bases de Datos (StatefulSets)",
+      "module": "Caso: DataSphere",
+      "content": "Para su clúster de Redis, DataSphere necesita que cada pod mantenga su nombre y disco de forma persistente, incluso tras fallos de nodo.",
+      "goal": "Desplegar un StatefulSet para Redis con 3 réplicas.",
+      "code": "apiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: \nspec:\n  serviceName: \n  replicas: \n  selector:\n    matchLabels:\n      app: \n  template:\n    metadata:\n      labels:\n        app: \n    spec:\n      containers:\n      - name: \n        image: \n  volumeClaimTemplates:\n  - metadata:\n      name: \n    spec:\n      accessModes: [ \"ReadWriteOnce\" ]\n      resources:\n        requests:\n          storage: ",
+      "steps": [
+        {
+          "t": "Validar StatefulSet",
+          "c": "kubectl get sts"
+        }
+      ]
+    },
+    "12": {
+      "title": "Agentes Globales (DaemonSets)",
+      "module": "Caso: GlobalCompute",
+      "content": "Necesitamos recolectar métricas de CPU de todos los servidores. Debes asegurar que cada nodo del clúster ejecute una instancia del agente de monitoreo.",
+      "goal": "Configurar un DaemonSet para el recolector de métricas.",
+      "steps": [
+        {
+          "t": "Validar Cobertura",
+          "c": "kubectl get ds"
+        }
+      ]
+    },
+    "13": {
+      "title": "Conciliación Nocturna (CronJobs)",
+      "module": "Caso: CloudNexus",
+      "content": "A las 00:00 cada día, se debe ejecutar un proceso de conciliación bancaria que cierre las transacciones del día anterior.",
+      "goal": "Configurar un CronJob que ejecute una tarea cada medianoche.",
+      "code": "apiVersion: batch/v1\nkind: CronJob\nmetadata:\n  name: \nspec:\n  schedule: \n  jobTemplate:\n    spec:\n      template:\n        spec:\n          containers:\n          - name: \n            image: \n            command: \n          restartPolicy: ",
+      "steps": [
+        {
+          "t": "Verificar Programación",
+          "c": "kubectl get cronjobs"
+        }
+      ]
+    },
+    "14": {
+      "title": "Alta Disponibilidad: ReplicsSets",
+      "module": "Caso: CloudNexus",
+      "content": "La landing page no puede depender de un solo pod. Si el pod actual falla, el sistema debe garantizar que siempre existan 3 réplicas activas.",
+      "goal": "Configurar un ReplicaSet con 3 instancias de la app frontend.",
+      "steps": [
+        {
+          "t": "Validar Réplicas",
+          "c": "kubectl get rs"
+        }
+      ]
+    },
+    "15": {
+      "title": "Gestión de Ciclo de Vida: Deployments",
+      "module": "Caso: CloudNexus",
+      "content": "El equipo de desarrollo lanzará nuevas versiones semanalmente. Debes usar el objeto estándar para gestionar 'Rolling Updates' y evitar caídas de servicio.",
+      "goal": "Crear un Deployment 'web-v1' con estrategia RollingUpdate.",
+      "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: \nspec:\n  replicas: \n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: \n      maxUnavailable: \n  selector:\n    matchLabels:\n      app: \n  template:\n    metadata:\n      labels:\n        app: \n    spec:\n      containers:\n      - name: \n        image: ",
+      "steps": [
+        {
+          "t": "Verificar Despliegue",
+          "c": "kubectl get deploy"
+        }
+      ]
+    },
+    "16": {
+      "title": "Zero Trust: Network Policies",
+      "module": "Caso: SafeNet",
+      "content": "Para cumplir con PCI-DSS, el pod de base de datos de SafeNet no debe aceptar tráfico de ningún sitio que no sea el pod de Backend.",
+      "goal": "Implementar una NetworkPolicy que bloquee el tráfico no autorizado.",
+      "code": "apiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: \nspec:\n  podSelector:\n    matchLabels:\n      role: \n  policyTypes:\n  - Ingress\n  ingress:\n  - from:\n    - podSelector:\n        matchLabels:\n          role: ",
+      "steps": [
+        {
+          "t": "Aplicar Política",
+          "c": "kubectl apply -f network-policy.yaml"
+        }
+      ]
+    },
+    "17": {
+      "title": "Elasticidad Automática (HPA)",
+      "module": "Caso: CloudNexus",
+      "content": "Durante eventos de alta carga, el sistema debe escalar el número de pods automáticamente para mantener la latencia bajo control.",
+      "goal": "Configurar un HorizontalPodAutoscaler al 70% de uso de CPU.",
+      "steps": [
+        {
+          "t": "Verificar HPA",
+          "c": "kubectl get hpa"
+        }
+      ]
+    },
+    "18": {
+      "title": "Estandarización con Helm",
+      "module": "Operaciones",
+      "content": "El despliegue manual de YAMLs es propenso a errores. Como arquitecto, debes empaquetar la infraestructura para que sea reproducible.",
+      "goal": "Instalar un Chart de Helm (nginx) y verificar su estado.",
+      "steps": [
+        {
+          "t": "Listar Apps",
+          "c": "helm list"
+        }
+      ]
+    },
+    "19": {
+      "title": "Observabilidad: Topología y Consumo",
+      "module": "Operaciones",
+      "content": "Debes monitorear el consumo de recursos en tiempo real para identificar posibles fugas de memoria o cuellos de botella en la CPU.",
+      "goal": "Visualizar el consumo de recursos de los nodos y pods.",
+      "steps": [
+        {
+          "t": "Top Nodos",
+          "c": "kubectl top nodes"
+        },
+        {
+          "t": "Top Pods",
+          "c": "kubectl top pods"
+        }
+      ]
+    },
+    "20": {
+      "title": "Gobernanza: Resource Quotas",
+      "module": "Caso: GlobalCompute",
+      "content": "Para evitar que un solo equipo agote el presupuesto de la nube, debes imponer límites estrictos al consumo total del namespace de desarrollo.",
+      "goal": "Crear un ResourceQuota 'dev-quota' que limite el total de CPU y RAM.",
+      "code": "apiVersion: v1\nkind: ResourceQuota\nmetadata:\n  name: \n  namespace: \nspec:\n  hard:\n    requests.cpu: \n    requests.memory: \n    limits.cpu: \n    limits.memory: ",
+      "steps": [
+        {
+          "t": "Validar Cuota",
+          "c": "kubectl get quota -n marketing-dept"
+        }
+      ]
+    }
+  }
+}

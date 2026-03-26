@@ -1,0 +1,80 @@
+# =============================================================================
+# CloudNative University — Community Edition (CE)
+# Docker Compose — Single-command deployment
+#
+# Usage:
+#   1. Copy .env.example to .env and fill in your values
+#   2. Run: docker compose up -d
+#
+# Author  : Victor S. Recio (@vsroot_) — vsrecio@nixversity.com
+# License : MIT
+# =============================================================================
+
+services:
+
+  # ── PostgreSQL Database ────────────────────────────────────────────────────
+  cloudmaster_db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cloudmaster}
+      POSTGRES_DB: ${DB_NAME:-cloudmaster}
+    ports:
+      - "5432:5432"
+    volumes:
+      - cloudmaster_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-admin} -d ${DB_NAME:-cloudmaster}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend Orchestrator (Go) ──────────────────────────────────────────────
+  orchestrator:
+    build: ./backend
+    image: ${ORCHESTRATOR_IMAGE:-cnu_orchestrator:latest}
+    restart: unless-stopped
+    environment:
+      # Database
+      DB_HOST: cloudmaster_db
+      DB_USER: ${DB_USER:-admin}
+      DB_PASSWORD: ${DB_PASSWORD:-cloudmaster}
+      DB_NAME: ${DB_NAME:-cloudmaster}
+      # Student identity (default user created on startup)
+      STUDENT_NAME: ${STUDENT_NAME:-Cloud Student}
+      STUDENT_EMAIL: ${STUDENT_EMAIL:-student@cloudnative.university}
+      STUDENT_KEY: ${STUDENT_KEY:-CNU-2026}
+      # Admin credentials
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      # Lab content path inside the container
+      LABSPACE_SOURCE_PATH: /app/labs
+      LAB_HOST_PATH: ${LAB_HOST_PATH:-/tmp/cnu_labs}
+      # Runtime
+      GIN_MODE: release
+    ports:
+      - "8081:8081"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock        # Required: spin up student lab containers
+      - /tmp/cloudmaster_workspaces:/tmp/cloudmaster_workspaces  # Student workspace persistence
+      - ${LAB_CONTENT_PATH:-./labs}:/app/labs             # Raíz de TODOS los labs (cnu_kubernetes, cnu_docker, etc.)
+      - ${LAB_HOST_PATH:-./labs}:${LAB_HOST_PATH:-/tmp/cnu_labs} # Mirror absoluto para docker compose -f
+
+    depends_on:
+      cloudmaster_db:
+        condition: service_healthy
+
+  # ── Frontend (React + Vite) ────────────────────────────────────────────────
+  frontend:
+    build: ./frontend
+    image: ${FRONTEND_IMAGE:-cnu_frontend:latest}
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - orchestrator
+
+
+
+volumes:
+  cloudmaster_data:

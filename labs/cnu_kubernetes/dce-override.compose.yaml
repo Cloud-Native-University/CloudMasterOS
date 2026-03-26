@@ -1,0 +1,10 @@
+services:
+  workspace:
+    environment:
+      OPENAI_BASE_URL: http://model-runner.docker.internal:12434/engines/v1
+      MODEL_RUNNER_HOST: http://model-runner.docker.internal:12434
+    extra_hosts:
+      - "model-runner.docker.internal:host-gateway"
+  visual-chatbot:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

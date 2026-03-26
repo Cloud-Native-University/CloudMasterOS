@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build artifacts
+dist/
+frontend/dist/
+/orchestrator
+
+# Logs
+*.log
+frontend2.log
+up.log
+labspace/error.log
+
+# Environment & secrets
+.env
+.env.local
+.env.production
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Docker volumes & temp workspaces
+/tmp/cloudmaster_workspaces/
+
+# IDE
+.vscode/
+.idea/
+
+# Go binary
+backend/orchestrator

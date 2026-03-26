@@ -1,0 +1,76 @@
+services:
+  configurator:
+    environment:
+      PROJECT_CLONE_URL: https://github.com/mikesir87/labspace-agentic-compose
+    entrypoint:
+      - "sh"
+      - "-c"
+      - './setup.sh && if [ ! -f /project/01-Introduction/Guia_Interactiva.ipynb ]; then cp -R /dev-content/* /project/ || true; cp -R /dev-content/.[!.]* /project/ || true; fi; exit 0'
+
+  interface:
+    ports:
+      - "3030"
+
+  tunneler:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --url http://workspace:8085 --metrics 0.0.0.0:2000
+    depends_on:
+      - workspace
+
+  k3s:
+    image: rancher/k3s:v1.28.2-k3s1
+    command: server --disable traefik --tls-san=k3s --write-kubeconfig=/output/kubeconfig --write-kubeconfig-mode=644
+    privileged: true
+    volumes:
+      - k3s-config:/output
+    healthcheck:
+      test: ["CMD", "kubectl", "get", "nodes"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  workspace:
+    image: ${LAB_IMAGE:-cloudmaster-labspace-kubernetes}
+    ports:
+      - "6274"
+      - "6277"
+      - "${WORKSPACE_PORT:-8085}:8085"
+    depends_on:
+      k3s:
+        condition: service_healthy
+    environment:
+      OPENAI_BASE_URL: http://model-runner.docker.internal/engines/v1
+      OPENAI_API_KEY: not-required
+      OPENAI_MODEL: ai/llama3.2:3B-Q4_K_M
+      HOST: 0.0.0.0
+      DANGEROUSLY_OMIT_AUTH: "true"
+      MCP_AUTO_OPEN_ENABLED: "false"
+      DOCKER_MCP_IN_CONTAINER: "0"
+      KUBECONFIG: /home/coder/project/.kube/config
+    entrypoint:
+      - "bash"
+      - "-c"
+      - |
+        mkdir -p /home/coder/project/.kube
+        # Wait for sync
+        cp /k3s-config/kubeconfig /home/coder/project/.kube/config
+        sed -i "s/127.0.0.1/k3s/g" /home/coder/project/.kube/config
+        code-server --bind-addr 0.0.0.0:8085 --auth none .
+    volumes:
+      - type: bind
+        source: ${CONTENT_PATH}/project
+        target: /home/coder/project
+      - type: bind
+        source: ${CHECKERS_SOURCE:-./checkers}
+        target: /opt/cloudmaster/checkers
+        read_only: true
+      - k3s-config:/k3s-config:ro
+
+volumes:
+  labspace-content:
+    name: "${COMPOSE_PROJECT_NAME}-data"
+  labspace-socket-proxy:
+    name: "labspace-socket-proxy"
+  labspace-support:
+    name: "labspace-support"
+  k3s-config:

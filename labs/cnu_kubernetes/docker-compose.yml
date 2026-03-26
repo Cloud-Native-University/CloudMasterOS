@@ -1,0 +1,56 @@
+services:
+  tunneler:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --url http://workspace:8085 --metrics 0.0.0.0:2000
+    depends_on:
+      - workspace
+
+  k3s:
+    image: rancher/k3s:v1.28.2-k3s1
+    command: server --disable traefik --tls-san=k3s --write-kubeconfig=/output/kubeconfig --write-kubeconfig-mode=644
+    privileged: true
+    volumes:
+      - k3s-config:/output
+    healthcheck:
+      test: ["CMD", "kubectl", "get", "nodes"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  workspace:
+    build: .
+    image: cnu_kubernetes
+    ports:
+      - "${WORKSPACE_PORT:-8085}:8085"
+    depends_on:
+      k3s:
+        condition: service_healthy
+    environment:
+      HOST: 0.0.0.0
+      DANGEROUSLY_OMIT_AUTH: "true"
+      KUBECONFIG: /home/coder/project/.kube/config
+      DOCKER_HOST: unix:///var/run/docker.sock
+    entrypoint:
+      - "bash"
+      - "-c"
+      - |
+        mkdir -p /home/coder/project/.kube
+        # Copy kubeconfig and point it to the k3s service
+        cp /k3s-config/kubeconfig /home/coder/project/.kube/config
+        sed -i "s/127.0.0.1/k3s/g" /home/coder/project/.kube/config
+        # Start VS Code server
+        code-server --bind-addr 0.0.0.0:8085 --auth none .
+    volumes:
+      - type: bind
+        source: ${CONTENT_PATH}/project
+        target: /home/coder/project
+      - type: bind
+        source: ${CHECKERS_SOURCE:-./checkers}
+        target: /opt/cloudmaster/checkers
+        read_only: true
+      - k3s-config:/k3s-config:ro
+      # Docker-out-of-Docker: gives students access to the host Docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  k3s-config:
