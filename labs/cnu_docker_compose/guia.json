@@ -1,0 +1,144 @@
+{
+  "tasks": {
+    "1": {
+      "title": "El Hola Mundo Multicontenedor",
+      "module": "Nivel 1: Fundamentos y Orquestación Básica",
+      "content": "El objetivo es entender la sintaxis declarativa y el ciclo de vida. Crea un archivo docker-compose.yml que levante un servidor Nginx y un contenedor Alpine que realice un curl al servidor Nginx usando el nombre del servicio.",
+      "code": "version: '3.8'\nservices:\n  web:\n    image: nginx\n  client:\n    image: alpine\n    command: curl web",
+      "steps": [{"t": "Crear y levantar", "c": "docker compose up"}]
+    },
+    "2": {
+      "title": "Persistencia de Datos",
+      "module": "Nivel 1: Fundamentos y Orquestación Básica",
+      "content": "Levanta una instancia de PostgreSQL y utiliza un Named Volume para asegurar que los datos sobrevivan a un docker-compose down.",
+      "code": "version: '3.8'\nservices:\n  db:\n    image: postgres\n    volumes:\n      - pgdata:/var/lib/postgresql/data\nvolumes:\n  pgdata:",
+      "steps": [{"t": "Aprovisionar persistencia", "c": "docker compose up -d"}]
+    },
+    "3": {
+      "title": "Variables de Entorno",
+      "module": "Nivel 1: Fundamentos y Orquestación Básica",
+      "content": "Configura un servicio de WordPress donde las credenciales de la base de datos se pasen mediante un archivo .env externo, no hardcodeadas.",
+      "code": "services:\n  wordpress:\n    image: wordpress\n    env_file: .env",
+      "steps": [{"t": "Definir .env y testear", "c": "touch .env"}]
+    },
+    "4": {
+      "title": "Mapeo de Puertos y Colisiones",
+      "module": "Nivel 1: Fundamentos y Orquestación Básica",
+      "content": "Levanta dos servicios de Apache en el mismo archivo, mapeándolos a los puertos 8081 y 8082 del host.",
+      "code": "services:\n  web1:\n    image: httpd\n    ports:\n      - '8081:80'\n  web2:\n    image: httpd\n    ports:\n      - '8082:80'",
+      "steps": [{"t": "Mapeo de puertos", "c": "docker compose up -d"}]
+    },
+    "5": {
+      "title": "Comandos Personalizados",
+      "module": "Nivel 1: Fundamentos y Orquestación Básica",
+      "content": "Crea un servicio basado en la imagen oficial de Python que, al iniciar, ejecute un script específico mediante la instrucción command.",
+      "code": "services:\n  worker:\n    image: python:3.9\n    command: python -c 'print(\"Hola desde el script personalizado\")'",
+      "steps": [{"t": "Override command", "c": "docker compose up"}]
+    },
+    "6": {
+      "title": "Redes Aisladas (Bridge)",
+      "module": "Nivel 2: Redes y Dependencias",
+      "content": "Configura dos redes: frontend y backend. Un servicio de Python debe estar en ambas, pero la base de datos solo debe ser visible en backend.",
+      "code": "networks:\n  frontend:\n  backend:",
+      "steps": [{"t": "Aislar topología", "c": "docker compose up -d"}]
+    },
+    "7": {
+      "title": "Control de Inicio con depends_on",
+      "module": "Nivel 2: Redes y Dependencias",
+      "content": "Configura un escenario donde una API de Node.js espere a que la base de datos Redis esté 'healthy' antes de iniciar.",
+      "code": "depends_on:\n  redis:\n    condition: service_healthy",
+      "steps": [{"t": "Esperar readiness", "c": "docker compose up"}]
+    },
+    "8": {
+      "title": "Alias de Red",
+      "module": "Nivel 2: Redes y Dependencias",
+      "content": "Implementa un servicio que sea accesible a través de múltiples nombres (aliases) dentro de la red interna de Compose.",
+      "code": "networks:\n  default:\n    aliases:\n      - log_server",
+      "steps": [{"t": "Prueba aliases", "c": "docker compose exec"}]
+    },
+    "9": {
+      "title": "Escalado Horizontal",
+      "module": "Nivel 2: Redes y Dependencias",
+      "content": "Levanta un servicio de worker y utiliza el flag --scale para iniciar 3 instancias. Verifica cómo Compose maneja los nombres.",
+      "code": "docker compose up -d --scale worker=3",
+      "steps": [{"t": "Replicar Worker", "c": "docker compose up --scale worker=3"}]
+    },
+    "10": {
+      "title": "External Networks",
+      "module": "Nivel 2: Redes y Dependencias",
+      "content": "Crea un archivo de Compose que se conecte a una red Docker ya existente creada previamente de forma manual.",
+      "code": "networks:\n  mi_red_externa:\n    external: true",
+      "steps": [{"t": "Acoplar red externa", "c": "docker network create mi_red_externa"}]
+    },
+    "11": {
+      "title": "Bind Mounts para Hot-Reload",
+      "module": "Nivel 3: Desarrollo y Optimización",
+      "content": "Configura un entorno de desarrollo para Node.js donde los cambios en el código local se reflejen instantáneamente en el contenedor sin reconstruir la imagen.",
+      "code": "volumes:\n  - ./:/usr/src/app",
+      "steps": [{"t": "Hacer bind mount", "c": "docker compose watch"}]
+    },
+    "12": {
+      "title": "Build on the fly",
+      "module": "Nivel 3: Desarrollo y Optimización",
+      "content": "En lugar de usar image:, utiliza la instrucción build para compilar un Dockerfile local, pasando args (build arguments) desde el archivo Compose.",
+      "code": "build:\n  context: .\n  args:\n    ENV_MODE: development",
+      "steps": [{"t": "Compilar dinámicamente", "c": "docker compose build"}]
+    },
+    "13": {
+      "title": "Multi-Stage Build Integration",
+      "module": "Nivel 3: Desarrollo y Optimización",
+      "content": "Configura Compose para que utilice un target específico de un Dockerfile multi-stage.",
+      "code": "build:\n  target: development",
+      "steps": [{"t": "Targeted builds", "c": "docker compose up"}]
+    },
+    "14": {
+      "title": "Perfiles (Profiles)",
+      "module": "Nivel 3: Desarrollo y Optimización",
+      "content": "Utiliza profiles para definir servicios que solo se levanten si se especifica el perfil (ej. un adminer o db-gui para debug).",
+      "code": "profiles:\n  - debug",
+      "steps": [{"t": "Iniciar con perfil", "c": "docker compose --profile debug up"}]
+    },
+    "15": {
+      "title": "Resource Limiting",
+      "module": "Nivel 3: Desarrollo y Optimización",
+      "content": "Restringe un contenedor de procesamiento pesado para que no use más de 0.5 CPUs y 128MB de RAM mediante la sección deploy.",
+      "code": "deploy:\n  resources:\n    limits:\n      cpus: '0.5'\n      memory: 128M",
+      "steps": [{"t": "Aplicar cgroups", "c": "docker compose up"}]
+    },
+    "16": {
+      "title": "Secrets Management",
+      "module": "Nivel 4: Avanzado y Producción",
+      "content": "Seguridad: Utiliza la directiva secrets para pasar certificados SSL a un contenedor sin que residan en variables de entorno.",
+      "code": "secrets:\n  db_password:\n    file: ./db_password.txt",
+      "steps": [{"t": "Usar secretos", "c": "docker compose up -d"}]
+    },
+    "17": {
+      "title": "Extending Services",
+      "module": "Nivel 4: Avanzado y Producción",
+      "content": "Crea docker-compose.base.yml y override. Utiliza la herencia (extends) para evitar duplicar código en varios entornos.",
+      "code": "extends:\n  file: docker-compose.base.yml\n  service: backend",
+      "steps": [{"t": "Herencia Compose", "c": "docker compose up"}]
+    },
+    "18": {
+      "title": "Healthcheck Personalizado",
+      "module": "Nivel 4: Avanzado y Producción",
+      "content": "Implementa un healthcheck avanzado que ejecute un script complejo dentro del contenedor para determinar si está listo.",
+      "code": "healthcheck:\n  test: [\"CMD\", \"bash\", \"/opt/check.sh\"]\n  interval: 10s",
+      "steps": [{"t": "Salud condicional", "c": "docker compose ps"}]
+    },
+    "19": {
+      "title": "Logging Centralizado",
+      "module": "Nivel 4: Avanzado y Producción",
+      "content": "Configura el driver de logs en Compose para limitar el tamaño de los archivos de log (json-file con max-size) y evitar llenar el disco.",
+      "code": "logging:\n  driver: \"json-file\"\n  options:\n    max-size: \"10m\"\n    max-file: \"3\"",
+      "steps": [{"t": "Rotar logs", "c": "docker compose up -d"}]
+    },
+    "20": {
+      "title": "Sidecar Pattern",
+      "module": "Nivel 4: Avanzado y Producción",
+      "content": "Implementa un contenedor de aplicación principal y un contenedor Sidecar que compartan el mismo volumen de logs.",
+      "code": "services:\n  app:\n  sidecar:\n    volumes_from:\n      - app",
+      "steps": [{"t": "Arquitectura Sidecar", "c": "docker compose up -d"}]
+    }
+  }
+}

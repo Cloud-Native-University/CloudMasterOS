@@ -7,7 +7,7 @@ const LOGO_URL = 'https://cloudnative.university/img/logo-w2x.png';
 const ALL_PROJECTS = {
   fundamentals: [
     { id: 'docker', name: 'Docker', cat: 'Containers', logo: 'docker', active: true },
-    { id: 'docker-compose', name: 'Docker Compose', cat: 'Orchestration', logo: 'docker', active: false },
+    { id: 'compose', name: 'Docker Compose', cat: 'Orchestration', logo: 'docker', active: true },
     { id: 'docker-sandbox', name: 'Docker Sandbox', cat: 'Security', logo: 'docker', active: false },
     { id: 'podman', name: 'Podman', cat: 'Containers', logo: 'https://logo.svgcdn.com/devicon/podman-original.svg', active: false },
     { id: 'golang', name: 'Go', cat: 'Programming', logo: 'https://go.dev/blog/go-brand/Go-Logo/Go-Logo_Blue.png', active: false },
