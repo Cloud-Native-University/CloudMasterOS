@@ -72,6 +72,8 @@ func SetupRoutes(r *gin.Engine, manager *docker.LabManager) {
 				courseFolder = "cnu_docker_compose"
 			} else if course == "docker-sandbox" {
 				courseFolder = "cnu_docker_sandbox"
+			} else if course == "docker-models" {
+				courseFolder = "cnu_docker_models"
 			}
 
 			fullPath := filepath.Join(basePath, courseFolder, "guia.json")
