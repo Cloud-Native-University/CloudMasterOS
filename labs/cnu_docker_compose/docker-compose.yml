@@ -1,0 +1,25 @@
+services:
+  workspace:
+    build: .
+    image: cnu_docker_fundamentals
+    container_name: cnu-student-docker-compose
+    ports:
+      - "8085"
+    environment:
+      - DANGEROUSLY_OMIT_AUTH=true
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    entrypoint:
+      - "bash"
+      - "-c"
+      - |
+        code-server --bind-addr 0.0.0.0:8085 --auth none .
+    volumes:
+      - type: bind
+        source: ${CONTENT_PATH}/project
+        target: /home/coder/project
+      - type: bind
+        source: ${CHECKERS_PATH:-./checkers}
+        target: /opt/cloudmaster/checkers
+        read_only: true
+      # Mount Docker Daemon natively to allow CLI execution
+      - /var/run/docker.sock:/var/run/docker.sock

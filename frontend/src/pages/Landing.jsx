@@ -6,8 +6,8 @@ const LOGO_URL = 'https://cloudnative.university/img/logo-w2x.png';
 
 const ALL_PROJECTS = {
   fundamentals: [
-    { id: 'docker', name: 'Docker', cat: 'Containers', logo: 'docker', active: false },
-    { id: 'docker-compose', name: 'Docker Compose', cat: 'Orchestration', logo: 'docker', active: false },
+    { id: 'docker', name: 'Docker', cat: 'Containers', logo: 'docker', active: true },
+    { id: 'compose', name: 'Docker Compose', cat: 'Orchestration', logo: 'docker', active: true },
     { id: 'docker-sandbox', name: 'Docker Sandbox', cat: 'Security', logo: 'docker', active: false },
     { id: 'podman', name: 'Podman', cat: 'Containers', logo: 'https://logo.svgcdn.com/devicon/podman-original.svg', active: false },
     { id: 'golang', name: 'Go', cat: 'Programming', logo: 'https://go.dev/blog/go-brand/Go-Logo/Go-Logo_Blue.png', active: false },
@@ -98,7 +98,7 @@ const ALL_PROJECTS = {
 
 const getLogoUrl = (logo) => {
   if (logo.startsWith('http')) return logo;
-  if (logo === 'docker') return 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
+  if (logo === 'docker') return 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg';
   return `/img/cncf_logos/${logo}.svg`;
 };
 
