@@ -1,0 +1,144 @@
+{
+  "tasks": {
+    "1": {
+      "title": "El Modelo Empaquetado",
+      "module": "Nivel 1: El Contenedor como Artefacto de ML",
+      "content": "Crear una imagen que contenga un modelo de Scikit-learn pre-entrenado. Copia un archivo .pkl dentro de una imagen de Python y exponlo mediante un script simple.",
+      "code": "FROM python:3.9\nCOPY model.pkl /\nCMD [\"python\", \"-c\", \"import pickle; print('Modelo Cargado')\"]",
+      "steps": [{"t": "Construir base", "c": "docker build -t mi-modelo ."}]
+    },
+    "2": {
+      "title": "Inferencia vía API (Flask/FastAPI)",
+      "module": "Nivel 1: El Contenedor como Artefacto de ML",
+      "content": "Convertir un modelo estático en un microservicio de inferencia vía un endpoint HTTP /predict.",
+      "code": "docker run -d -p 8000:8000 api-modelo\ncurl -X POST http://localhost:8000/predict -d '{\"data\":[1,2]}'",
+      "steps": [{"t": "Exponer API", "c": "docker run -p 8000:8000"}]
+    },
+    "3": {
+      "title": "Gestión de Dependencias Pesadas",
+      "module": "Nivel 1: El Contenedor como Artefacto de ML",
+      "content": "Manejar conflictos de versiones instalando dependencias estancas y asegurando pip freeze exacto.",
+      "code": "RUN pip install numpy==1.21.0 pandas==1.3.0",
+      "steps": [{"t": "Fijar librerías", "c": "cat requirements.txt"}]
+    },
+    "4": {
+      "title": "El Modelo Liviano (Alpine vs Slim)",
+      "module": "Nivel 1: El Contenedor como Artefacto de ML",
+      "content": "Comparar python:3.9 vs python:3.9-slim reduciendo la huella de TensorFlow para despliegues rápidos en Edge.",
+      "code": "FROM python:3.9-slim\nRUN pip install tensorflow-cpu",
+      "steps": [{"t": "Usar slim", "c": "docker history imagen-slim"}]
+    },
+    "5": {
+      "title": "Variables de Entorno para Hiperparámetros",
+      "module": "Nivel 1: El Contenedor como Artefacto de ML",
+      "content": "Hacer que el umbral de decisión (threshold) sea modificable sin rebuildear inyectándolo vía ENV.",
+      "code": "docker run -e THRESHOLD=0.8 modelo_inferencia",
+      "steps": [{"t": "Inyectar ENV", "c": "docker run -e THRESHOLD="}]
+    },
+    "6": {
+      "title": "Inyección de NVIDIA Runtime",
+      "module": "Nivel 2: Aceleración y Hardware (GPU & Drivers)",
+      "content": "Configurar el acceso a la GPU desde el contenedor inyectando el runtime Cuda nativo de NVIDIA.",
+      "code": "docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi",
+      "steps": [{"t": "Montar GPUs", "c": "docker run --gpus all"}]
+    },
+    "7": {
+      "title": "Compilación de Modelos en el Build",
+      "module": "Nivel 2: Aceleración y Hardware (GPU & Drivers)",
+      "content": "Convertir un modelo de PyTorch a formato nativo estático ONNX durante el proceso de docker build.",
+      "code": "RUN python export_to_onnx.py model.pt model.onnx",
+      "steps": [{"t": "Hornear ONNX", "c": "docker build ."}]
+    },
+    "8": {
+      "title": "Multi-Architecture Models",
+      "module": "Nivel 2: Aceleración y Hardware (GPU & Drivers)",
+      "content": "Apunta el modelo a plataformas heterogéneas armando linux/arm64 y linux/amd64 concurrentemente con buildx.",
+      "code": "docker buildx build --platform linux/amd64,linux/arm64 -t mi-vision .",
+      "steps": [{"t": "Cross-compile", "c": "docker buildx build --platform"}]
+    },
+    "9": {
+      "title": "Capa de Datos Separada (Model Mounting)",
+      "module": "Nivel 2: Aceleración y Hardware (GPU & Drivers)",
+      "content": "Arrancar un microservicio genérico sin estado montando los tensores (.pt/.h5) como bind mount Read-Only.",
+      "code": "docker run -v $(pwd)/model.h5:/app/model.h5:ro inferencer",
+      "steps": [{"t": "Bindear Pesos", "c": "docker run -v pesos:ro"}]
+    },
+    "10": {
+      "title": "Shared Memory para Deep Learning",
+      "module": "Nivel 2: Aceleración y Hardware (GPU & Drivers)",
+      "content": "Expandir el límite raquítico /dev/shm estándar para evitar que PyTorch muera de 'Bus Error'.",
+      "code": "docker run --rm --shm-size 4G mi-pytorch-model",
+      "steps": [{"t": "Expandir SHM", "c": "docker run --shm-size"}]
+    },
+    "11": {
+      "title": "El Pipeline de Entrenamiento",
+      "module": "Nivel 3: Orquestación de Modelos (ML Pipelines)",
+      "content": "Enlazar 3 contenedores secuenciales (Limpieza, Train, Eval) usando compose depends_on y compartir archivos.",
+      "code": "services:\n  train:\n    volumes: ['data:/workspace']",
+      "steps": [{"t": "Pipeline DAG", "c": "docker compose up"}]
+    },
+    "12": {
+      "title": "Model Registry Local",
+      "module": "Nivel 3: Orquestación de Modelos (ML Pipelines)",
+      "content": "Subir artefactos a un Docker Registry privado para que distintos nodos de GPU puedan halar el modelo.",
+      "code": "docker tag modelo localhost:5000/modelo\ndocker push localhost:5000/modelo",
+      "steps": [{"t": "Aprovisionar Registry", "c": "docker push"}]
+    },
+    "13": {
+      "title": "A/B Testing de Modelos con Compose",
+      "module": "Nivel 3: Orquestación de Modelos (ML Pipelines)",
+      "content": "Hacer balanceo de carga canario comparando V1 y V2 tras un endpoint NGINX enrutando inferencia.",
+      "code": "services:\n  model_v1:\n  model_v2:\n  lb: depends_on [model_v1, model_v2]",
+      "steps": [{"t": "Shadow Traffic", "c": "docker compose up"}]
+    },
+    "14": {
+      "title": "Sidecar de Monitoreo",
+      "module": "Nivel 3: Orquestación de Modelos (ML Pipelines)",
+      "content": "Monitorear Data Drift y Latencia conectando Prometheus en un contenedor adjunto.",
+      "code": "docker run --network model_net prometheus/prometheus",
+      "steps": [{"t": "Conectar scraper", "c": "docker run prometheus"}]
+    },
+    "15": {
+      "title": "Inferencia Batch con Colas",
+      "module": "Nivel 3: Orquestación de Modelos (ML Pipelines)",
+      "content": "Levantar un Redis e inundarlo de Tasks de imágenes para que un worker loop procese todo asíncronamente.",
+      "code": "docker run -d redis\ndocker run -e REDIS_HOST=... celery_worker",
+      "steps": [{"t": "Disparar Celery", "c": "docker run celery"}]
+    },
+    "16": {
+      "title": "Escaneo de Vulnerabilidades en Modelos",
+      "module": "Nivel 4: MLOps Avanzado y Seguridad",
+      "content": "Mucha librería vieja contiene huecos zero-day. Escanear con Docker Scout para atrapar CVEs en TensorFlow.",
+      "code": "docker scout cves tensor-image",
+      "steps": [{"t": "Auditar CVEs", "c": "docker scout quickview"}]
+    },
+    "17": {
+      "title": "Model Sharding (Inferencia Distribuida)",
+      "module": "Nivel 4: MLOps Avanzado y Seguridad",
+      "content": "Particionar un LLM o Modelo gigante donde dos contenedores se comunican la salida de las capas ocultas.",
+      "code": "docker run -e SHARD_ID=1 model_split",
+      "steps": [{"t": "Ejecutar shard", "c": "docker run -e SHARD_ID"}]
+    },
+    "18": {
+      "title": "Auto-Retraining Trigger",
+      "module": "Nivel 4: MLOps Avanzado y Seguridad",
+      "content": "Ejecutar un build automático dentro de un CI/CD container cada que cambien los datos montados.",
+      "code": "docker build --no-cache -t model_updated .",
+      "steps": [{"t": "Reconstrucción reactiva", "c": "docker build"}]
+    },
+    "19": {
+      "title": "Model Sandbox: Restricción de Red",
+      "module": "Nivel 4: MLOps Avanzado y Seguridad",
+      "content": "Prohibir exfiltración aislando totalmente el modelo de Internet para ejecutar un clasificador descargado sospechoso.",
+      "code": "docker run --rm --network none untrusted_model",
+      "steps": [{"t": "Airgapping Red", "c": "docker run --network none"}]
+    },
+    "20": {
+      "title": "The Grand Finale: Triton / TFServing",
+      "module": "Nivel 4: MLOps Avanzado y Seguridad",
+      "content": "Invocación concurrente multiproceso desplegando servidores de grado empresarial como NVIDIA Triton.",
+      "code": "docker run --rm -p8000:8000 --gpus=all nvcr.io/nvidia/tritonserver:xx.yy-py3 tritonserver --model-repository=/models",
+      "steps": [{"t": "Levantar Servidor", "c": "docker run tritonserver"}]
+    }
+  }
+}

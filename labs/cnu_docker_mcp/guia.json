@@ -1,0 +1,144 @@
+{
+  "tasks": {
+    "1": {
+      "title": "El Primer Bridge MCP",
+      "module": "Nivel 1: El Host y el Protocolo",
+      "content": "Levantar un servidor MCP básico de \"Eco\" en Docker. Crear un contenedor que exponga un servidor MCP vía STDIO y conectarlo a un cliente (como Claude Desktop).",
+      "code": "docker run -i mcp-echo",
+      "steps": [{"t": "Run MCP Eco", "c": "docker run -i"}]
+    },
+    "2": {
+      "title": "Aislamiento de Contexto",
+      "module": "Nivel 1: El Host y el Protocolo",
+      "content": "Configurar permisos limitados montando solo una carpeta específica del host en modo lectura como Data Source inmutable para IA.",
+      "code": "docker run -i -v $(pwd)/data:/data:ro mcp-filesystem",
+      "steps": [{"t": "Read-Only Mount", "c": "docker run -v :ro"}]
+    },
+    "3": {
+      "title": "MCP Inspector en Contenedor",
+      "module": "Nivel 1: El Host y el Protocolo",
+      "content": "Debuggear el protocolo JSON-RPC. Ejecutar mcp-inspector dentro de Docker para probar el servidor local sin requerir un cliente LLM acoplado.",
+      "code": "docker run mcp-inspector",
+      "steps": [{"t": "Abrir Inspector", "c": "docker run mcp-inspector"}]
+    },
+    "4": {
+      "title": "Dockerización de Servidores Community",
+      "module": "Nivel 1: El Host y el Protocolo",
+      "content": "Convertir un servidor MCP de la comunidad de Node o Python (Ej. Google Maps) a un artefacto Multi-stage inferior a 200MB.",
+      "code": "FROM node:18-alpine AS builder\n...\nFROM node:18-alpine\nCOPY --from=builder /app .",
+      "steps": [{"t": "Build Multi-stage", "c": "docker build -t mcp-maps ."}]
+    },
+    "5": {
+      "title": "Variables de Entorno y API Keys",
+      "module": "Nivel 1: El Host y el Protocolo",
+      "content": "Inyectar credenciales al modelo sin comprometer secrets. Configurar Brave Search MCP inyectando API KEY mediante compose o env-file.",
+      "code": "docker run -i --env-file .env mcp-brave",
+      "steps": [{"t": "Inyectar ENV", "c": "docker run --env-file"}]
+    },
+    "6": {
+      "title": "MCP + Postgres: El Oráculo de Datos",
+      "module": "Nivel 2: Integración de Datos (Data Sources)",
+      "content": "Levantar un stack de DB nativa conectada a un Servidor MCP para que el Agente pueda auto-generar Queries de BI y Analytics.",
+      "code": "services:\n  db:\n  mcp-postgres:\n    environment:\n      PG_URL: postgres://...",
+      "steps": [{"t": "Conectar Base", "c": "docker compose up"}]
+    },
+    "7": {
+      "title": "Explorador de GitHub Segurizado",
+      "module": "Nivel 2: Integración de Datos (Data Sources)",
+      "content": "Aislar un token vulnerable (GitHub PAT) montándolo dinámicamente o por secrets para lectura profunda de repositorios privados.",
+      "code": "docker run -i -e GITHUB_PAT=x mcp-github",
+      "steps": [{"t": "Analista Git", "c": "docker run mcp-github"}]
+    },
+    "8": {
+      "title": "Memoria Persistente (Knowledge Graph)",
+      "module": "Nivel 2: Integración de Datos (Data Sources)",
+      "content": "Proveer almacenamiento a largo plazo para memoria persistente. Soportar Memory Server amparado por Volúmenes.",
+      "code": "docker run -i -v mcp-mem:/store mcp-memory",
+      "steps": [{"t": "Memoria Volume", "c": "docker volume create mcp-mem"}]
+    },
+    "9": {
+      "title": "El Proxy MCP",
+      "module": "Nivel 2: Integración de Datos (Data Sources)",
+      "content": "Gateway centralizado. Combinar Múltiples fuentes (Google Drive + Local) exponiendo un solo STDIO unificado en Edge.",
+      "code": "docker run -i mcp-gateway --route 'drive:...' --route 'local:...'",
+      "steps": [{"t": "Unificar Proxy", "c": "docker run mcp-proxy"}]
+    },
+    "10": {
+      "title": "Seguridad de Red en MCP",
+      "module": "Nivel 2: Integración de Datos (Data Sources)",
+      "content": "Prevenir exfiltración con el flag `none`. Ejecutar un MCP agresivo denegando salida a WAN externa pero habilitando File I/O interno.",
+      "code": "docker run -i --network none -v ./logs:/logs mcp-parser",
+      "steps": [{"t": "Airgapping Red", "c": "docker run --network none"}]
+    },
+    "11": {
+      "title": "Escritura de Código Dinámica",
+      "module": "Nivel 3: Automatización y Agentes (Advanced Tools)",
+      "content": "Permitir a IA crear herramientas. Orquestar un sandbox host-guest donde un Agente Python en contención pueda imprimir scripts generativos y ser ejecutado.",
+      "code": "docker run -i -v ./workspace:/sandbox mcp-coder",
+      "steps": [{"t": "Generación iterativa", "c": "docker run mcp-coder"}]
+    },
+    "12": {
+      "title": "Navegación Autónoma (Puppeteer)",
+      "module": "Nivel 3: Automatización y Agentes (Advanced Tools)",
+      "content": "Instanciar Web Scraping y control de JS visual desde IA montando contenedores con Playwright+Chromium integrados a MCP.",
+      "code": "docker run -i -v ./screenshots:/out mcp-puppeteer",
+      "steps": [{"t": "Visual Action", "c": "docker run mcp-puppeteer"}]
+    },
+    "13": {
+      "title": "Monitorización de Logs con MCP",
+      "module": "Nivel 3: Automatización y Agentes (Advanced Tools)",
+      "content": "Dejar que la IA audite la infraestructura del host pasando el docker socket read-only al MCP logs inspector.",
+      "code": "docker run -i -v /var/run/docker.sock:/var/run/docker.sock:ro mcp-docker-logs",
+      "steps": [{"t": "Auditar Logs", "c": "docker run -v docker.sock"}]
+    },
+    "14": {
+      "title": "Versionamiento de Herramientas",
+      "module": "Nivel 3: Automatización y Agentes (Advanced Tools)",
+      "content": "Controlar el ciclo de vida de los Agents probando MCP v1 vs v2 modificando YAML Tags simulando pérdida y adquisición de skills.",
+      "code": "image: mcp-tool:v2",
+      "steps": [{"t": "Swap Version", "c": "docker compose up -d"}]
+    },
+    "15": {
+      "title": "MCP Multi-Usuario",
+      "module": "Nivel 3: Automatización y Agentes (Advanced Tools)",
+      "content": "Acelerar Data Engineering enlazando un Agente Cliente sobre SSH hacia un Servidor Docker Remoto rico en GPU de ingesta.",
+      "code": "ssh user@cloud 'docker run -i mcp-remote'",
+      "steps": [{"t": "Tunel STDIO", "c": "ssh docker run"}]
+    },
+    "16": {
+      "title": "Limpieza de Contexto (Auto-Purge)",
+      "module": "Nivel 4: Maestría en Arquitectura MCP",
+      "content": "Sidecar de Privacidad. Purgar logs en /tmp de la IA o cronjobbar las caches residuales de contexto GDPR por minutos.",
+      "code": "docker run -d -v context:/data purger echo \"*/10 * * * * rm -rf /data/*\"",
+      "steps": [{"t": "Auto Clean", "c": "docker run purger"}]
+    },
+    "17": {
+      "title": "MCP para DevOps: Gestión de Infra",
+      "module": "Nivel 4: Maestría en Arquitectura MCP",
+      "content": "Dotar a un chatbot del control de Terraform o AWS CLI con credenciales dinámicas enlazadas como IAM roles locales.",
+      "code": "docker run -i -e AWS_ACCESS_KEY_ID=... mcp-terraform",
+      "steps": [{"t": "Terraform Tool", "c": "docker run mcp-terraform"}]
+    },
+    "18": {
+      "title": "Balanceo de Carga de Inferencia",
+      "module": "Nivel 4: Maestría en Arquitectura MCP",
+      "content": "Escalar capacidades de respuesta del agente balanceando réplicas de endpoints de Herramientas pesadas (ej. OCR Server).",
+      "code": "docker compose up --scale mcp-ocr=3",
+      "steps": [{"t": "Scale Replicas", "c": "docker compose --scale"}]
+    },
+    "19": {
+      "title": "Custom MCP Server (Python SDK)",
+      "module": "Nivel 4: Maestría en Arquitectura MCP",
+      "content": "Programar tu propio Servidor local invocando @mcp.tool() usando el SDK, construyendo el Dockerfile y poniéndolo a marchar.",
+      "code": "FROM python:3.10\nRUN pip install mcp[cli]\nCOPY server.py .\nCMD [\"python\", \"server.py\"]",
+      "steps": [{"t": "Build Dev MCP", "c": "docker build -t mcp-custom ."}]
+    },
+    "20": {
+      "title": "El Agente Autónomo Total",
+      "module": "Nivel 4: Maestría en Arquitectura MCP",
+      "content": "Singularidad Local. Desplegar Archivo Compose titánico fusionando Files, DB, GitHub, Web y Proxy MCP para empoderar un Arquitecto IA.",
+      "code": "docker compose up -d\n# El Agente final despertará con poderes omniscientes en la máquina",
+      "steps": [{"t": "Omnisciencia", "c": "docker compose up -d"}]
+    }
+  }
+}
