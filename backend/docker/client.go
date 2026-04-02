@@ -57,6 +57,8 @@ func (m *LabManager) StartContainer(ctx context.Context, studentName, studentEma
 		courseFolder = "cnu_docker_sandbox"
 	} else if courseID == "docker-models" {
 		courseFolder = "cnu_docker_models"
+	} else if courseID == "docker-mcp" {
+		courseFolder = "cnu_docker_mcp"
 	}
 	baseContentPath := filepath.Join(rootLabsPath, courseFolder)
 

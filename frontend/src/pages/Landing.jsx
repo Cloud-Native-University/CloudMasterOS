@@ -10,6 +10,7 @@ const ALL_PROJECTS = {
     { id: 'compose', name: 'Docker Compose', cat: 'Orchestration', logo: 'docker', active: true },
     { id: 'docker-sandbox', name: 'Docker Sandbox', cat: 'Security', logo: 'docker', active: true },
     { id: 'docker-models', name: 'Docker Models', cat: 'MLOps', logo: 'docker', active: true },
+    { id: 'docker-mcp', name: 'Docker MCP', cat: 'AI Agents', logo: 'docker', active: true },
     { id: 'podman', name: 'Podman', cat: 'Containers', logo: 'https://logo.svgcdn.com/devicon/podman-original.svg', active: false },
     { id: 'golang', name: 'Go', cat: 'Programming', logo: 'https://go.dev/blog/go-brand/Go-Logo/Go-Logo_Blue.png', active: false },
     { id: 'python', name: 'Python', cat: 'Programming', logo: 'https://www.python.org/static/community_logos/python-logo-master-v3-TM.png', active: false },
