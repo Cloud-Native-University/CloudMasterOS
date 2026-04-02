@@ -42,7 +42,9 @@ const ALL_PROJECTS = {
     { id: 'docker-ia', name: 'Docker AI', cat: 'AI/ML', logo: 'docker', active: false },
   ],
   incubating: [
+    { id: 'ctf_k8s_breakout', name: 'Cloud Native CTF', cat: 'Security & Hacking', logo: 'https://www.kali.org/images/kali-logo.svg', active: true },
     { id: 'artifact-hub', name: 'Artifact Hub', cat: 'Hub', logo: 'artifact_hub', active: false },
+
     { id: 'backstage', name: 'Backstage', cat: 'Dev Portal', logo: 'backstage', active: false },
     { id: 'buildpacks', name: 'Buildpacks', cat: 'Tooling', logo: 'buildpacks', active: false },
     { id: 'cert-manager', name: 'Cert Manager', cat: 'Security', logo: 'cert_manager', active: false },

