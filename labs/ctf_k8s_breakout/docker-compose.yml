@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # El "Blanco" del CTF (DVWA) 🕵️‍♂️
+  vulnerable-pod:
+    image: vulnerables/web-dvwa:latest
+    container_name: cnu-target-9090
+    ports:
+      - "9090:80"
+    networks:
+      - lab-network
+    labels:
+      - "cnu.type=target"
+
+  # El entorno del estudiante (KALI-ENABLED + TU BASE LOCAL) 🖥️⚔️
+  workspace:
+    build: . # Esto construirá el Dockerfile con las armas de Kali
+    image: cnu_ctf_k8s_breakout # 🛡️ Nombre ÚNICO para que no pise el lab de K8s 🛡️
+    container_name: cnu-student-attacker
+    ports:
+      - "8085" # El orquestador Go requiere estrictamente este puerto (8085 TCP proxy)
+    environment:
+      - DANGEROUSLY_OMIT_AUTH=true
+      - TARGET_IP=vulnerable-pod
+    entrypoint:
+      - "bash"
+      - "-c"
+      - |
+        # Iniciar VS Code Server explícitamente en 8085 como espera el orquestador
+        code-server --bind-addr 0.0.0.0:8085 --auth none .
+    networks:
+      - lab-network
+    volumes:
+      - type: bind
+        source: ${CONTENT_PATH}/project
+        target: /home/coder/project
+      - type: bind
+        source: ${CHECKERS_PATH:-./checkers}
+        target: /opt/cloudmaster/checkers
+        read_only: true
+    labels:
+      - "cnu.type=student"
+
+networks:
+  lab-network:
+    driver: bridge
