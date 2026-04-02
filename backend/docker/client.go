@@ -49,6 +49,8 @@ func (m *LabManager) StartContainer(ctx context.Context, studentName, studentEma
 	courseFolder := courseID
 	if courseID == "kubernetes" {
 		courseFolder = "cnu_kubernetes"
+	} else if courseID == "docker" {
+		courseFolder = "cnu_docker"
 	}
 	baseContentPath := filepath.Join(rootLabsPath, courseFolder)
 
@@ -56,7 +58,7 @@ func (m *LabManager) StartContainer(ctx context.Context, studentName, studentEma
 	// Sanitizamos el correo para usarlo como identificador y persistir archivos
 	safeEmail := strings.ReplaceAll(studentEmail, "@", "_at_")
 	safeEmail = strings.ReplaceAll(safeEmail, ".", "_")
-	studentContentPath := "/tmp/cloudmaster_workspaces/" + safeEmail
+	studentContentPath := "/tmp/cloudmaster_workspaces/" + safeEmail + "/" + courseFolder
 
 	// Ensure student workspace exists
 	os.MkdirAll(filepath.Join(studentContentPath, "project"), 0755)

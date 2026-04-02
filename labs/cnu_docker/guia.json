@@ -1,1 +1,164 @@
-{"tasks": {}}
+{
+  "tasks": {
+    "1": {
+      "title": "Comandos Básicos: Hello World",
+      "module": "Nivel 1: Conceptos Core",
+      "content": "Para interactuar con la plataforma de contenedores, la puerta de entrada es el CLI. Vamos a ejecutar tu primer contenedor efímero para entender el entorno.",
+      "goal": "Ejecuta 'docker run hello-world' para validar la comunicación con el Docker Daemon.",
+      "code": "docker run --rm hello-world",
+      "steps": [{"t": "Run Básico", "c": "docker run hello-world"}]
+    },
+    "2": {
+      "title": "Docker Init",
+      "module": "Nivel 1: Conceptos Core",
+      "content": "Docker Init genera automáticamente un `Dockerfile` y configuración estandarizada basada en tu lenguaje de programación (Válido en Node, Go, Python).",
+      "goal": "Navega a la carpeta de la tarea y ejecuta docker init.",
+      "code": "docker init",
+      "steps": [{"t": "Inicialización", "c": "docker init"}]
+    },
+    "3": {
+      "title": "Creando un Dockerfile",
+      "module": "Nivel 1: Conceptos Core",
+      "content": "El `Dockerfile` es el código fuente de una imagen de contenedor. Aprenderemos a definir variables ENV y capas estáticas.",
+      "goal": "Construye una imagen desde un Dockerfile local usando 'docker build'.",
+      "code": "docker build -t mi-app:v1 .",
+      "steps": [{"t": "Docker Build", "c": "docker build -t app:v1 ."}]
+    },
+    "4": {
+      "title": "Docker Compose",
+      "module": "Nivel 2: Operaciones y Redes",
+      "content": "Para levantar stacks con bases de datos y frontend interconectados usamos YAML declarativo en Docker Compose.",
+      "goal": "Levanta el archivo compose de prueba con nginx.",
+      "code": "docker compose up -d",
+      "steps": [{"t": "Compose Up", "c": "docker compose up -d"}]
+    },
+    "5": {
+      "title": "Volúmenes y Persistencia",
+      "module": "Nivel 2: Operaciones y Redes",
+      "content": "Sin volúmenes, la información muere si el contenedor es recreado. Creemos un almacenamiento gestionado.",
+      "goal": "Crea un volumen nombrado e inyéctalo en un contenedor NGINX.",
+      "code": "docker volume create app_data\ndocker run -v app_data:/data nginx",
+      "steps": [{"t": "Volume Create", "c": "docker volume create cnu_vol"}]
+    },
+    "6": {
+      "title": "Aislamiento: Custom Networks",
+      "module": "Nivel 2: Operaciones y Redes",
+      "content": "La red por defecto 'bridge' no provee resolución DNS automática mediante nombres de contenedores. Crear redes personalizadas es esencial para microservicios.",
+      "goal": "Crea una red personalizada. ",
+      "code": "docker network create cnu_net",
+      "steps": [{"t": "Network Create", "c": "docker network create ops"}]
+    },
+    "7": {
+      "title": "Docker System",
+      "module": "Nivel 2: Operaciones y Redes",
+      "content": "A veces nos quedamos sin disco en el nodo host debido al caché inactivo de Docker.",
+      "goal": "Utiliza docker system prune para purgar imágenes y contenedores zombis.",
+      "code": "docker system prune -a -f",
+      "steps": [{"t": "System Prune", "c": "docker system prune"}]
+    },
+    "8": {
+      "title": "Registry Local y Push",
+      "module": "Nivel 3: Seguridad y Distribución",
+      "content": "En entornos restringidos se necesita alojar contenedores localmente. Deploya un servicio `registry:2` interno.",
+      "goal": "Arranca un registro local en el puerto 5000 y sube tu propia imagen.",
+      "code": "docker run -d -p 5000:5000 --name registry registry:2\ndocker pull alpine && docker tag alpine localhost:5000/alpine\ndocker push localhost:5000/alpine",
+      "steps": [{"t": "Levantar Registro", "c": "docker run -d -p 5000:5000 registry:2"}]
+    },
+    "9": {
+      "title": "Docker Scout",
+      "module": "Nivel 3: Seguridad y Distribución",
+      "content": "Analizar la seguridad de las imágenes garantiza que no desplegamos vulnerabilidades críticas al entorno productivo.",
+      "goal": "Haz una radiografia CVE a una imagen vulnerable antigua.",
+      "code": "docker scout cves nginx:1.14.0",
+      "steps": [{"t": "Analisis Scout", "c": "docker scout quickview"}]
+    },
+    "10": {
+      "title": "Hardening: Capabilities y Rootless",
+      "module": "Nivel 3: Seguridad y Distribución",
+      "content": "A veces, un atacante puede escapar del contenedor usando privilegios innecesarios. Se deben arrojar las 'capabilities'.",
+      "goal": "Ejecuta un contenedor estricto tirando todos sus privilegios sys_caps.",
+      "code": "docker run --rm -d --cap-drop=ALL ubuntu sleep 100",
+      "steps": [{"t": "Drop Capabilities", "c": "docker run --cap-drop=ALL"}]
+    },
+    "11": {
+      "title": "Content Trust (Firma de Imágenes)",
+      "module": "Nivel 3: Seguridad y Distribución",
+      "content": "Habilita DOCKER_CONTENT_TRUST para forzar que Docker solo ejecute o descargue imágenes con firmas criptográficas válidas de un Notary Server.",
+      "goal": "Intenta firmar y empujar o limitar tu daemon temporalmente.",
+      "code": "export DOCKER_CONTENT_TRUST=1",
+      "steps": [{"t": "Export Trust", "c": "export DOCKER_CONTENT_TRUST=1"}]
+    },
+    "12": {
+      "title": "Aislamiento Estricto: Docker Sandbox",
+      "module": "Nivel 4: Ingeniería Avanzada",
+      "content": "Paraargas de trabajo multi-tenant inseguras, los cgroups por defecto no son suficientes. Aprendemos sobre la arquitectura 'Sandbox' utilizando runtime classes como gVisor (runsc) o User Namespaces aislados.",
+      "goal": "Explora el concepto de ejecución 'enjaulada' lanzando el runtime seguro o simulado.",
+      "code": "docker run --runtime=runsc --rm -it alpine sh",
+      "steps": [{"t": "Docker Sandbox", "c": "docker run --runtime=runsc"}]
+    },
+    "13": {
+      "title": "Docker Buildx Multi-Arquitectura",
+      "module": "Nivel 4: Ingeniería Avanzada",
+      "content": "Gracias a BuildKit, Buildx permite la paralelización e inyección de arquitecturas mixtas como ARM y AMD64 de forma transparente.",
+      "goal": "Habilita buildx y crea un dummy build que compile linux/amd64 y linux/arm64.",
+      "code": "docker buildx create --use\ndocker buildx build --platform linux/amd64,linux/arm64 -t app-multi .",
+      "steps": [{"t": "Platform build", "c": "docker buildx build --platform"}]
+    },
+    "14": {
+      "title": "Docker Healthchecks",
+      "module": "Nivel 4: Ingeniería Avanzada",
+      "content": "Docker compose necesita saber cómo comprobar que tu servicio realmente funciona para enrutar tráfico (no solo que el proceso siga activo).",
+      "goal": "Añade un tag de healthcheck al Dockerfile.",
+      "code": "HEALTHCHECK --interval=30s --timeout=3s \\\n  CMD curl -f http://localhost/ || exit 1",
+      "steps": [{"t": "Agregar Check", "c": "HEALTHCHECK CMD curl"}]
+    },
+    "15": {
+      "title": "Inicialización de Docker Swarm",
+      "module": "Nivel 5: Orquestación (Pre-K8s)",
+      "content": "Docker Swarm es el orquestador nativo. Empezaremos inicializando el clúster usando la red local (siendo tú el primer Manager).",
+      "goal": "Inicia a la fuerza un clúster de Swarm.",
+      "code": "docker swarm init",
+      "steps": [{"t": "Swarm Init", "c": "docker swarm init"}]
+    },
+    "16": {
+      "title": "Despliegue de Swarm Services",
+      "module": "Nivel 5: Orquestación (Pre-K8s)",
+      "content": "En Swarm no corremos contenedores estancos, desplegamos 'Servicios' replicados para balanceo automático.",
+      "goal": "Despliega un servicio nginx con 3 réplicas en tu nuevo enjambre.",
+      "code": "docker service create --name web --replicas 3 nginx",
+      "steps": [{"t": "Service Create", "c": "docker service create"}]
+    },
+    "17": {
+      "title": "Descargar y Ejecutar Local AI Models",
+      "module": "Nivel 6: Dockerizando AI/GenAI",
+      "content": "Docker está abrazando el desarrollo acelerado. En este reto bajaremos Ollama nativo dentro de un contenedor en nuestra laptop.",
+      "goal": "Despliega un pod contenedor de Ollama.",
+      "code": "docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama",
+      "steps": [{"t": "Arrancar AI Server", "c": "docker run ollama"}]
+    },
+    "18": {
+      "title": "Pull Model con Ollama CLI",
+      "module": "Nivel 6: Dockerizando AI/GenAI",
+      "content": "Una vez con el contenedor de la capa base, inyectaremos un comando remoto que descargará los tensores del modelo a memoria.",
+      "goal": "Usa exec para decirle al contenedor de Ollama que baje el modelo ligero qwen:0.5b o un LLM tiny.",
+      "code": "docker exec -it ollama ollama run qwen:0.5b",
+      "steps": [{"t": "Tirar de Model", "c": "docker exec ollama run"}]
+    },
+    "19": {
+      "title": "Docker IA: Consultando al API",
+      "module": "Nivel 6: Dockerizando AI/GenAI",
+      "content": "Los modelos containerizados son geniales, pero necesitan comunicarse con el Frontend y Backend locales a traves de endpoints REST nativos u OPENAI bindings.",
+      "goal": "Hace PING con curl a tu modelo local por puerto localhost:11434.",
+      "code": "curl http://localhost:11434/api/generate -d '{\"model\": \"qwen:0.5b\", \"prompt\":\"Hola\"}'",
+      "steps": [{"t": "Testear local AI", "c": "curl 11434"}]
+    },
+    "20": {
+      "title": "Compose Watch & Docker Extensions",
+      "module": "Nivel 6: Dockerizando AI/GenAI",
+      "content": "Llegamos al epílogo: la nueva era incluye `compose watch` para recargar el stack instantáneamente y crear módulos nativos en Desktop.",
+      "goal": "Revisa los comandos experimentales de docker compose y festeja en grande que has superado todo el curso Cloud Native CE de Docker.",
+      "code": "docker compose version",
+      "steps": [{"t": "Graduacion Docker", "c": "docker !!"}]
+    }
+  }
+}

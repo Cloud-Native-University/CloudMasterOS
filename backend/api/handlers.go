@@ -66,6 +66,8 @@ func SetupRoutes(r *gin.Engine, manager *docker.LabManager) {
 			courseFolder := course
 			if course == "kubernetes" {
 				courseFolder = "cnu_kubernetes"
+			} else if course == "docker" {
+				courseFolder = "cnu_docker"
 			}
 
 			fullPath := filepath.Join(basePath, courseFolder, "guia.json")
