@@ -1,0 +1,144 @@
+{
+  "tasks": {
+    "1": {
+      "title": "Prisión de Solo Lectura",
+      "module": "Nivel 1: El Confinamiento",
+      "content": "Desplegar un contenedor donde sea imposible crear archivos, incluso como root. Intenta un touch /test para validar el aislamiento inmutable de la raíz.",
+      "code": "docker run --rm --read-only nginx touch /test",
+      "steps": [{"t": "Filesystem de Lectura", "c": "docker run --read-only"}]
+    },
+    "2": {
+      "title": "El Escape Imposible",
+      "module": "Nivel 1: El Confinamiento",
+      "content": "Evitar que un usuario pueda escalar privilegios. Inicia un contenedor de Alpine deshabilitando explícitamente la ganancia de nuevos privilegios.",
+      "code": "docker run --rm --security-opt=no-new-privileges alpine",
+      "steps": [{"t": "Drop escalamiento", "c": "docker run --security-opt=no-new-privileges"}]
+    },
+    "3": {
+      "title": "Identidades Falsas (User Namespace)",
+      "module": "Nivel 1: El Confinamiento",
+      "content": "Lograr que el usuario root del contenedor sea un usuario sin privilegios en el host. Requiere configurar User Namespaces Mapping.",
+      "code": "docker run --rm -d --userns-remap=default alpine sleep 100",
+      "steps": [{"t": "Namespace Mapping", "c": "docker run --userns-remap"}]
+    },
+    "4": {
+      "title": "Capacidades Selectivas",
+      "module": "Nivel 1: El Confinamiento",
+      "content": "Un contenedor que puede cambiar la hora del sistema pero no hacer nada más como root.",
+      "code": "docker run --rm --cap-drop=ALL --cap-add=SYS_TIME alpine date -s \"2030-01-01 12:00:00\"",
+      "steps": [{"t": "Cap-Add", "c": "docker run --cap-drop=ALL --cap-add=SYS_TIME"}]
+    },
+    "5": {
+      "title": "El Sandbox de Perfiles (Seccomp)",
+      "module": "Nivel 1: El Confinamiento",
+      "content": "Bloquear llamadas al sistema (syscalls). Ejecutar un perfil personalizado que bloquee mkdir.",
+      "code": "docker run --rm --security-opt seccomp=custom.json alpine mkdir test",
+      "steps": [{"t": "Seccomp custom", "c": "docker run --security-opt seccomp="}]
+    },
+    "6": {
+      "title": "Hambre de CPU",
+      "module": "Nivel 2: Control de Fronteras",
+      "content": "Evitar que un proceso congele el host limitándolo al 10% de un núcleo de CPU.",
+      "code": "docker run --rm --cpus=\".1\" alpine dd if=/dev/zero of=/dev/null",
+      "steps": [{"t": "Limite CPU", "c": "docker run --cpus=\".1\""}]
+    },
+    "7": {
+      "title": "La Trampa de Memoria (OOM Killer)",
+      "module": "Nivel 2: Control de Fronteras",
+      "content": "Limita un contenedor a 16MB de RAM y fuerza un desbordamiento para observar el proceso de OOMKilled.",
+      "code": "docker run --rm -m 16m lorel/docker-stress-ng --vm 1 --vm-bytes 32M",
+      "steps": [{"t": "Limite RAM", "c": "docker run -m 16m"}]
+    },
+    "8": {
+      "title": "Cuotas de Disco",
+      "module": "Nivel 2: Control de Fronteras",
+      "content": "Evitar ataques de fatiga de almacenamiento restringiendo el tamaño de escritura del nodo local.",
+      "code": "docker run --rm --storage-opt size=1G alpine dd if=/dev/zero of=/bigfile bs=1M count=2000",
+      "steps": [{"t": "Limite Disco", "c": "docker run --storage-opt size=1G"}]
+    },
+    "9": {
+      "title": "Límite de Procesos (Fork Bomb Protection)",
+      "module": "Nivel 2: Control de Fronteras",
+      "content": "Proteger el sandbox contra ataques DoS usando el flag --pids-limit a 10 e intentando detonar una bomba fork.",
+      "code": "docker run --rm --pids-limit 10 alpine sh -c ':(){ :|:& };:'",
+      "steps": [{"t": "Antifork", "c": "docker run --pids-limit 10"}]
+    },
+    "10": {
+      "title": "Ancho de Banda Restringido",
+      "module": "Nivel 2: Control de Fronteras",
+      "content": "Restringir la velocidad de bloque de I/O de lectura a 1mb/s simulando discos Edge.",
+      "code": "docker run --rm --device-read-bps /dev/sda:1mb alpine time dd if=/dev/sda of=/dev/null bs=1M count=10",
+      "steps": [{"t": "Velocidad IO", "c": "docker run --device-read-bps"}]
+    },
+    "11": {
+      "title": "El Nodo Silencioso",
+      "module": "Nivel 3: Redes en la Sombra",
+      "content": "Un contenedor que procesa datos en red local interna pero bloqueando todo su ruteo de internet.",
+      "code": "docker network create --internal darknet\ndocker run --rm --network darknet alpine ping google.com",
+      "steps": [{"t": "Red Interna", "c": "docker network create --internal"}]
+    },
+    "12": {
+      "title": "DNS Poisoning Sandbox",
+      "module": "Nivel 3: Redes en la Sombra",
+      "content": "Forzar una resolución de DNS falsa que inyecta una IP nativa a nivel del contenedor local.",
+      "code": "docker run --rm --add-host google.com:127.0.0.1 alpine ping google.com",
+      "steps": [{"t": "Veneno DNS", "c": "docker run --add-host"}]
+    },
+    "13": {
+      "title": "Sandbox con IP Estática",
+      "module": "Nivel 3: Redes en la Sombra",
+      "content": "Asignar un bloque de memoria de Subnet explícito e inyectar una IP permanente.",
+      "code": "docker network create --subnet 172.50.0.0/16 cnu_static\ndocker run --rm --network cnu_static --ip 172.50.0.10 alpine ip a",
+      "steps": [{"t": "Fijar IP", "c": "docker run --ip"}]
+    },
+    "14": {
+      "title": "Inspección de Tráfico",
+      "module": "Nivel 3: Redes en la Sombra",
+      "content": "Compartiendo un namespace de red clonado. El analista puede ver y capturar el tráfico crudo del contenedor víctima.",
+      "code": "docker run -d --name victima alpine sleep 100\ndocker run --rm -it --network container:victima nicolaka/netshoot tcpdump",
+      "steps": [{"t": "Conexion espejo", "c": "docker run --network container:"}]
+    },
+    "15": {
+      "title": "Exposición Selectiva",
+      "module": "Nivel 3: Redes en la Sombra",
+      "content": "Mapear un socket al Localhost del nodo en vez de exponerlo al mundo usando la flag 127.0.0.1 en publish.",
+      "code": "docker run -d -p 127.0.0.1:8080:80 nginx",
+      "steps": [{"t": "Puerto localhost", "c": "docker run -p 127.0.0.1:puerto"}]
+    },
+    "16": {
+      "title": "El Contenedor Zombie",
+      "module": "Nivel 4: Configuración Avanzada",
+      "content": "Sobrescribir el timeout de detención cuando un script inerte bloquea el catch signal de SIGTERM.",
+      "code": "docker run -d --name zombie alpine sleep 1000\ndocker stop --time 1 zombie",
+      "steps": [{"t": "Stop signal", "c": "docker stop --time 1"}]
+    },
+    "17": {
+      "title": "Auto-destrucción (Ephemeral Sandbox)",
+      "module": "Nivel 4: Configuración Avanzada",
+      "content": "Al salir los contenedores pierden el estado instantáneamente incluyendo los ramdisks acoplados con tmpfs.",
+      "code": "docker run --rm --tmpfs /run --tmpfs /tmp alpine sh",
+      "steps": [{"t": "Tmpfs mount", "c": "docker run --tmpfs /tmp"}]
+    },
+    "18": {
+      "title": "Hot-Swapping de Configuración",
+      "module": "Nivel 4: Configuración Avanzada",
+      "content": "Cambiar recursos limitados del CGroup (docker cgroups mem/cpu) en un sandbox vivo sin reiniar.",
+      "code": "docker run -d --name updatable alpine sleep 1000\ndocker update --memory 512m updatable",
+      "steps": [{"t": "Hot Swap", "c": "docker update --memory"}]
+    },
+    "19": {
+      "title": "Logging de Auditoría",
+      "module": "Nivel 4: Configuración Avanzada",
+      "content": "Rastrear las acciones implementando el driver json-file y rotación para auditorías forenses.",
+      "code": "docker run -d --log-driver json-file --log-opt max-size=1m alpine echo 'logs'",
+      "steps": [{"t": "Log configs", "c": "docker run --log-opt"}]
+    },
+    "20": {
+      "title": "El Oráculo (Healthchecks Complejos)",
+      "module": "Nivel 4: Configuración Avanzada",
+      "content": "Sandbox con Healthcheck lógico. Determinar el estado saludable si y solo si el consumo y scripts internos son óptimos.",
+      "code": "docker run -d --health-cmd \"df -h | grep -q '90%' && exit 1 || exit 0\" alpine sleep 100",
+      "steps": [{"t": "Health Check Command", "c": "docker run --health-cmd"}]
+    }
+  }
+}
