@@ -69,6 +69,8 @@ func (m *LabManager) StartContainer(ctx context.Context, studentName, studentEma
 		courseFolder = "cnu_golang"
 	} else if courseID == "python" {
 		courseFolder = "cnu_python"
+	} else if courseID == "linux" {
+		courseFolder = "cnu_linux"
 	}
 	baseContentPath := filepath.Join(rootLabsPath, courseFolder)
 
