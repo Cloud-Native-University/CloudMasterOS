@@ -15,7 +15,7 @@ const ALL_PROJECTS = {
     { id: 'docker-mcp', name: 'Docker MCP', cat: 'AI Agents', logo: 'docker', active: true },
     { id: 'podman', name: 'Podman', cat: 'Containers', logo: 'https://logo.svgcdn.com/devicon/podman-original.svg', active: true },
     { id: 'golang', name: 'Go', cat: 'Programming', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg', active: true },
-    { id: 'python', name: 'Python', cat: 'Programming', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg', active: false },
+    { id: 'python', name: 'Python', cat: 'Programming', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg', active: true },
     { id: 'linux', name: 'Linux', cat: 'Operating System', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg', active: false },
   ],
   graduated: [
