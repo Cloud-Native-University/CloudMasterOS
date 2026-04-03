@@ -1,0 +1,144 @@
+{
+  "tasks": {
+    "1": {
+      "title": "Activación del Cloud Builder",
+      "module": "Nivel 1: Conectividad y Hybrid Build",
+      "content": "Configura tu entorno local para que docker build apunte a un endpoint de Docker Build Cloud en lugar del daemon local.",
+      "code": "docker buildx create --use --name cloud builder.cloud.docker.com\ndocker buildx inspect --bootstrap",
+      "steps": [{"t": "Conectar a Nube", "c": "docker buildx create"}]
+    },
+    "2": {
+      "title": "El Build Frío vs Caliente",
+      "module": "Nivel 1: Conectividad y Hybrid Build",
+      "content": "Realiza una compilación pesada de una imagen de Node.js, límpiala localmente y vuelve a compilar para observar cómo el Remote Cache restaura las capas instantáneamente.",
+      "code": "docker buildx build -t mi-app .\ndocker image rm mi-app\ndocker buildx build -t mi-app .",
+      "steps": [{"t": "Prueba de Cache", "c": "docker buildx build"}]
+    },
+    "3": {
+      "title": "Análisis de Telemetría",
+      "module": "Nivel 1: Conectividad y Hybrid Build",
+      "content": "Usa la telemetría remota para identificar cuántos minutos de cómputo y cuánta CPU/RAM consumió tu build en la nube.",
+      "code": "docker buildx du\n# Analizando uso e info",
+      "steps": [{"t": "Inspeccionar Uso", "c": "docker buildx du"}]
+    },
+    "4": {
+      "title": "Optimización del Contexto",
+      "module": "Nivel 1: Conectividad y Hybrid Build",
+      "content": "Implementa un archivo .dockerignore avanzado para minimizar el tráfico de subida hacia el builder remoto.",
+      "code": "echo 'node_modules\n.git' > .dockerignore\ndocker buildx build .",
+      "steps": [{"t": "Reducir Tráfico", "c": "echo node_modules > .dockerignore"}]
+    },
+    "5": {
+      "title": "Multi-Platform Express",
+      "module": "Nivel 1: Conectividad y Hybrid Build",
+      "content": "Genera una imagen para linux/amd64 y linux/arm64 en un solo comando delegándolo a la nube sin sufrir la lentitud de QEMU local.",
+      "code": "docker buildx build --platform linux/amd64,linux/arm64 -t app-multi .",
+      "steps": [{"t": "Build Simultáneo", "c": "docker buildx build --platform"}]
+    },
+    "6": {
+      "title": "Inferencia con Aceleración Remota",
+      "module": "Nivel 2: Aceleración de IA y GPU Offload",
+      "content": "Ejecuta un contenedor de PyTorch offloading a un GPU remoto verficando que el cómputo ocurre lejos del CPU local.",
+      "code": "docker run --rm --gpus all pytorch/pytorch python -c 'import torch; print(torch.cuda.is_available())'",
+      "steps": [{"t": "Ejecutar CUDA Inferencia", "c": "docker run --gpus all"}]
+    },
+    "7": {
+      "title": "Model Loading Offload",
+      "module": "Nivel 2: Aceleración de IA y GPU Offload",
+      "content": "Configura un contenedor para descargar un modelo directo al Builder Remoto ahorrando tu ancho de banda.",
+      "code": "docker run -v model_volume:/models builder_offload huggingface-cli download gpt2",
+      "steps": [{"t": "Descarga Server-side", "c": "docker run huggingface-cli"}]
+    },
+    "8": {
+      "title": "Fine-tuning Efímero",
+      "module": "Nivel 2: Aceleración de IA y GPU Offload",
+      "content": "Lanza un entrenamiento ligero; la sesión temporal del offload builder termina para optimizar costos.",
+      "code": "docker run --rm offload_trainer python train.py --epochs 1",
+      "steps": [{"t": "Train Efimero", "c": "docker run --rm"}]
+    },
+    "9": {
+      "title": "Persistencia de Pesos",
+      "module": "Nivel 2: Aceleración de IA y GPU Offload",
+      "content": "Volúmenes Remotos: Mantén checkpoints del tuning guardados en la nube para próximas secuencias de offload.",
+      "code": "docker volume create remoto_weights\ndocker run -v remoto_weights:/app/checkpoints trainer",
+      "steps": [{"t": "Persistir Estado", "c": "docker run -v"}]
+    },
+    "10": {
+      "title": "Benchmark de Latencia",
+      "module": "Nivel 2: Aceleración de IA y GPU Offload",
+      "content": "Compara el throughput local contra el offload Cloud GPU.",
+      "code": "time docker run local_cv_model\ntime docker run offload_cv_model",
+      "steps": [{"t": "Medir Tiempo", "c": "time docker run"}]
+    },
+    "11": {
+      "title": "VDI Performance Fix",
+      "module": "Nivel 3: Optimización para VDI y Entornos Remotos",
+      "content": "Compilar 2GB de NodeJS desde una laptop de pocos recursos sin trabarla derivando la tarea al Builder Externo.",
+      "code": "docker buildx build -t monster-app --builder cloud-vdi .",
+      "steps": [{"t": "Delegar Compilación", "c": "docker buildx build --builder cloud"}]
+    },
+    "12": {
+      "title": "Shared Team Cache",
+      "module": "Nivel 3: Optimización para VDI y Entornos Remotos",
+      "content": "Varios desarrolladores se conectan al mismo Remote Cache. Si uno compila, el resto aprovecha su caché generada.",
+      "code": "docker buildx build --cache-to=type=registry,ref=team/cache --cache-from=type=registry,ref=team/cache .",
+      "steps": [{"t": "Caché Distribuida", "c": "docker buildx build --cache-to"}]
+    },
+    "13": {
+      "title": "Zero-Local-Storage Build",
+      "module": "Nivel 3: Optimización para VDI y Entornos Remotos",
+      "content": "Crea una imagen pesada y mándala a ECR sin que nunca toque tu disco local.",
+      "code": "docker buildx build --push -t myrepo/monster-app .",
+      "steps": [{"t": "Push Directo Remoto", "c": "docker buildx build --push"}]
+    },
+    "14": {
+      "title": "Hybrid Networking",
+      "module": "Nivel 3: Optimización para VDI y Entornos Remotos",
+      "content": "Conectar un contenedor lanzado en entorno offload remote con tu base de datos corriendo en Localhost de tu laptop.",
+      "code": "docker run --add-host host.docker.internal:host-gateway offload_app",
+      "steps": [{"t": "Túnel LAN", "c": "docker run --add-host host-gateway"}]
+    },
+    "15": {
+      "title": "Resource Limits Mapping",
+      "module": "Nivel 3: Optimización para VDI y Entornos Remotos",
+      "content": "Asignar límites de CPU/RAM de Docker Compose al Scheduler del Cloud para que levante en máquinas acordes.",
+      "code": "deploy:\n  resources:\n    limits:\n      cpus: '8'\n      memory: 16G",
+      "steps": [{"t": "Declarar Topes", "c": "docker compose up"}]
+    },
+    "16": {
+      "title": "Build Checks Remotos",
+      "module": "Nivel 4: MLOps y Arquitectura Avanzada",
+      "content": "Que el builder rechace agresivamente la compilación en nube si detecta bases inseguras o vulnerabilidades.",
+      "code": "docker buildx build --check .",
+      "steps": [{"t": "Bloqueo por CVE", "c": "docker buildx build --check"}]
+    },
+    "17": {
+      "title": "GitHub Actions Hybrid Flow",
+      "module": "Nivel 4: MLOps y Arquitectura Avanzada",
+      "content": "Libera CPUs de Runners de GH Actions lanzando el build a Cloud Build de Docker Offload.",
+      "code": "- uses: docker/setup-buildx-action@v2\n  with:\n    driver: remote",
+      "steps": [{"t": "Configurar Runner CI", "c": "nano .github/workflows/main.yml"}]
+    },
+    "18": {
+      "title": "Multi-Stage Target Offload",
+      "module": "Nivel 4: MLOps y Arquitectura Avanzada",
+      "content": "Extraer estáticamente la fase de tests al builder Cloud separando target final y compilación productiva.",
+      "code": "docker buildx build --target test --builder cloud .",
+      "steps": [{"t": "Target Remoto", "c": "docker buildx build --target"}]
+    },
+    "19": {
+      "title": "Provenance & Attestation",
+      "module": "Nivel 4: MLOps y Arquitectura Avanzada",
+      "content": "Al usar Builders de confianza, firma la cadena de suministro generando certificados unificados (SBOM / Provenance).",
+      "code": "docker buildx build --sbom=true --provenance=true .",
+      "steps": [{"t": "Firma de Artefactos", "c": "docker buildx build --sbom=true"}]
+    },
+    "20": {
+      "title": "The Warp Drive Challenge",
+      "module": "Nivel 4: MLOps y Arquitectura Avanzada",
+      "content": "Levantar un ecosistema robusto de microservicios. Local tomaría 10 minutos. Con Docker Offload en Compose de modo concurrente: segundos.",
+      "code": "docker compose build --parallel",
+      "steps": [{"t": "Despliegue Warp", "c": "docker compose build --parallel"}]
+    }
+  }
+}

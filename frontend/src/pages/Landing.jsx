@@ -8,13 +8,15 @@ const ALL_PROJECTS = {
   fundamentals: [
     { id: 'docker', name: 'Docker', cat: 'Containers', logo: 'docker', active: true },
     { id: 'compose', name: 'Docker Compose', cat: 'Orchestration', logo: 'docker', active: true },
+    { id: 'docker-networking', name: 'Docker Networking', cat: 'Networking', logo: 'docker', active: true },
+    { id: 'docker-offload', name: 'Docker Offload', cat: 'Cloud/GPU', logo: 'docker', active: true },
     { id: 'docker-sandbox', name: 'Docker Sandbox', cat: 'Security', logo: 'docker', active: true },
     { id: 'docker-models', name: 'Docker Models', cat: 'MLOps', logo: 'docker', active: true },
     { id: 'docker-mcp', name: 'Docker MCP', cat: 'AI Agents', logo: 'docker', active: true },
     { id: 'podman', name: 'Podman', cat: 'Containers', logo: 'https://logo.svgcdn.com/devicon/podman-original.svg', active: false },
-    { id: 'golang', name: 'Go', cat: 'Programming', logo: 'https://go.dev/blog/go-brand/Go-Logo/Go-Logo_Blue.png', active: false },
-    { id: 'python', name: 'Python', cat: 'Programming', logo: 'https://www.python.org/static/community_logos/python-logo-master-v3-TM.png', active: false },
-    { id: 'linux', name: 'Linux', cat: 'Operating System', logo: 'https://www.linux.org/images/logo.png', active: false },
+    { id: 'golang', name: 'Go', cat: 'Programming', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg', active: false },
+    { id: 'python', name: 'Python', cat: 'Programming', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg', active: false },
+    { id: 'linux', name: 'Linux', cat: 'Operating System', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg', active: false },
   ],
   graduated: [
     { id: 'kubernetes', name: 'Kubernetes', cat: 'Orchestration', logo: 'kubernetes', active: true },

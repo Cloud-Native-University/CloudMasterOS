@@ -1,0 +1,144 @@
+{
+  "tasks": {
+    "1": {
+      "title": "Aislamiento por Defecto",
+      "module": "Nivel 1: El Bridge y la Resolución de Nombres",
+      "content": "Entender por qué no usar el bridge por defecto (docker0). Levanta dos contenedores en la red default, intenta hacer un ping por nombre (que fallará). Luego crea un bridge custom y repite con éxito gracias a Internal DNS.",
+      "code": "docker run -d --name c1 alpine sleep 3600\ndocker run --rm alpine ping c1 # Falla\ndocker network create mired\ndocker run -d --name c2 --network mired alpine sleep 3600\ndocker run --rm --network mired alpine ping c2",
+      "steps": [{"t": "Crear Bridge", "c": "docker network create"}]
+    },
+    "2": {
+      "title": "Mapeo Estático vs Dinámico",
+      "module": "Nivel 1: El Bridge y la Resolución de Nombres",
+      "content": "Exponer servicios delegando al motor elegir puertos libres. Usa -P (mayúscula) para exponer un Nginx a un puerto efímero del host.",
+      "code": "docker run -d -P nginx\ndocker port [ID]",
+      "steps": [{"t": "P Mayúscula", "c": "docker run -P"}]
+    },
+    "3": {
+      "title": "DNS Externo Personalizado",
+      "module": "Nivel 1: El Bridge y la Resolución de Nombres",
+      "content": "Forzar una resolución ajena al Host. Inicia un contenedor configurando DNS 8.8.8.8 y 1.1.1.1 en la misma ejecución.",
+      "code": "docker run --rm --dns 8.8.8.8 --dns 1.1.1.1 alpine cat /etc/resolv.conf",
+      "steps": [{"t": "Sobrescribir DNS", "c": "docker run --dns"}]
+    },
+    "4": {
+      "title": "El Archivo /etc/hosts Dinámico",
+      "module": "Nivel 1: El Bridge y la Resolución de Nombres",
+      "content": "Mapear un dominio sintético a IP local sin tocar el motor corporativo de DNS, engañando con --add-host.",
+      "code": "docker run --rm --add-host api.local:10.0.0.50 alpine ping -c 1 api.local",
+      "steps": [{"t": "Inyectar Dominio", "c": "docker run --add-host"}]
+    },
+    "5": {
+      "title": "MAC Address Persistence",
+      "module": "Nivel 1: El Bridge y la Resolución de Nombres",
+      "content": "A veces es requerido fijar la capa L2 de red para licencias atadas al hardware. Asigna una dirección MAC dura.",
+      "code": "docker run --rm --mac-address 92:d0:c6:0a:29:33 alpine ip link show",
+      "steps": [{"t": "Sobrescribir MAC", "c": "docker run --mac-address"}]
+    },
+    "6": {
+      "title": "El Contenedor Invisible",
+      "module": "Nivel 2: Seguridad y Topologías Avanzadas",
+      "content": "Máximo aislamiento físico desconectando el VETH (Virtual Ethernet). Verifica que solo subsista la interfaz loopback (lo).",
+      "code": "docker run --rm --network none alpine ifconfig",
+      "steps": [{"t": "Red Nula", "c": "docker run --network none"}]
+    },
+    "7": {
+      "title": "Shared Network Stack (Sidecar)",
+      "module": "Nivel 2: Seguridad y Topologías Avanzadas",
+      "content": "Vincular dos sistemas al mismo Network Namespace local permitiendo latencia 0 en Localhost para pods sidecars.",
+      "code": "docker run -d --name master nginx\ndocker run --rm --network container:master curlimages/curl localhost",
+      "steps": [{"t": "Compartir Red", "c": "docker run --network container:"}]
+    },
+    "8": {
+      "title": "Host Networking Mode",
+      "module": "Nivel 2: Seguridad y Topologías Avanzadas",
+      "content": "Evadir el NAT de Bridge para máximo caudal. Correr usando net=host permitiendo abrir los puertos directamente en la máquina base.",
+      "code": "docker run -d --network host nginx\ncurl localhost:80",
+      "steps": [{"t": "Derretir Muros L2", "c": "docker run --network host"}]
+    },
+    "9": {
+      "title": "DMZ y Segmentación de Capas",
+      "module": "Nivel 2: Seguridad y Topologías Avanzadas",
+      "content": "Crea capa Public, Private y DB. Evita que un proxy toque por ninguna ruta la DB limitando ruteos de redes múltiples.",
+      "code": "docker network create public\ndocker network create db_seg\ndocker run -d --name bd --network db_seg mysql",
+      "steps": [{"t": "Microsegmentación", "c": "docker network create"}]
+    },
+    "10": {
+      "title": "IPAM: Control de Subredes",
+      "module": "Nivel 2: Seguridad y Topologías Avanzadas",
+      "content": "Prevenir colisiones con LAN de la oficina construyendo un segmento CIDR personalizado estático.",
+      "code": "docker network create --subnet 192.168.100.0/24 --gateway 192.168.100.1 private_lan",
+      "steps": [{"t": "Crear Subred", "c": "docker network create --subnet"}]
+    },
+    "11": {
+      "title": "Macvlan: Nodos de Capa 2 Reales",
+      "module": "Nivel 3: Multinodo y Capas L2/L3 (Overlay & Macvlan)",
+      "content": "Unir a un contenedor a la LAN principal, dándole visibilidad transparente para el router principal ignorando docker engine.",
+      "code": "docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 mac_net",
+      "steps": [{"t": "Instanciar L2 Macvlan", "c": "docker network create -d macvlan"}]
+    },
+    "12": {
+      "title": "El Túnel Overlay (Docker Swarm)",
+      "module": "Nivel 3: Multinodo y Capas L2/L3 (Overlay & Macvlan)",
+      "content": "Traspasar NAT físico entre Nodos. Despliega un servicio por un túnel L3 (VXLAN) con réplicas regadas en 2 Hosts distintos.",
+      "code": "docker swarm init\ndocker network create -d overlay my-overlay\ndocker service create --name web --network my-overlay nginx",
+      "steps": [{"t": "Túnel Overlay", "c": "docker network create -d overlay"}]
+    },
+    "13": {
+      "title": "Ingress Load Balancing",
+      "module": "Nivel 3: Multinodo y Capas L2/L3 (Overlay & Macvlan)",
+      "content": "El Ingress del motor en Swarm intercepta el tráfico en cualquier nodo físico y lo direcciona al nodo hospedador activo internamente.",
+      "code": "docker service create --name ping --publish published=8080,target=80 nginx",
+      "steps": [{"t": "Publicar Mesh Ingress", "c": "docker service create --publish"}]
+    },
+    "14": {
+      "title": "MTU Tuning",
+      "module": "Nivel 3: Multinodo y Capas L2/L3 (Overlay & Macvlan)",
+      "content": "Combatir la caída de paquetes en enlaces PPPoE o Túneles VPN IPSec manipulando la Unidad Inicial Maxima.",
+      "code": "docker network create --opt com.docker.network.driver.mtu=1400 low_mtu_net",
+      "steps": [{"t": "Fragmentación MTU", "c": "docker network create --opt"}]
+    },
+    "15": {
+      "title": "IP Virtual (VIP) vs DNS Round Robin",
+      "module": "Nivel 3: Multinodo y Capas L2/L3 (Overlay & Macvlan)",
+      "content": "Examinar el balanceador interno. Devolver 3 IPs de contenedor a nivel DNS en vez de 1 sola Virtual IP para enrutamiento manual.",
+      "code": "docker service create --endpoint-mode dnsrr --name web_rr nginx",
+      "steps": [{"t": "DNS Round Robin Mode", "c": "docker service create --endpoint-mode dnsrr"}]
+    },
+    "16": {
+      "title": "Inspección de Iptables",
+      "module": "Nivel 4: Troubleshooting y Kernel (Expert Mode)",
+      "content": "Auditar cómo Docker secuestra tu Firewall del propio kernel leyendo las cañerías del Target Nat y cadenas DOCKER.",
+      "code": "sudo iptables -t nat -L DOCKER",
+      "steps": [{"t": "Leer Reglas Kern", "c": "iptables -t nat -L DOCKER"}]
+    },
+    "17": {
+      "title": "Namespace Peering (Nsenter)",
+      "module": "Nivel 4: Troubleshooting y Kernel (Expert Mode)",
+      "content": "Penetrar en la Red de un contenedor desde afuera del ecosistema usando las primitivas crudas de Linux Cgroups.",
+      "code": "PID=$(docker inspect -f '{{.State.Pid}}' contenedor)\nsudo nsenter -t $PID -n ip addr",
+      "steps": [{"t": "Atravesar Cgroups", "c": "nsenter -t PID -n"}]
+    },
+    "18": {
+      "title": "Simulación de Latencia (Traffic Control)",
+      "module": "Nivel 4: Troubleshooting y Kernel (Expert Mode)",
+      "content": "Realidad adversa. Aplicar una degradación hostil agregando delay artificial a la tarjeta de red usando pragma linux tc.",
+      "code": "docker run --cap-add=NET_ADMIN -it ubuntu\ntc qdisc add dev eth0 root netem delay 200ms",
+      "steps": [{"t": "Inyectar Caos TC", "c": "tc qdisc add dev eth0"}]
+    },
+    "19": {
+      "title": "Análisis de Paquetes con Tcpdump",
+      "module": "Nivel 4: Troubleshooting y Kernel (Expert Mode)",
+      "content": "Interceptar el Handshake. Entrar quirúrgicamente para ver los paquetes crudos pcap fluir desde un segmento especifico.",
+      "code": "docker run -it --cap-add NET_ADMIN nicolaka/netshoot\ntcpdump -i eth0 -n",
+      "steps": [{"t": "Sniffear PCAP", "c": "tcpdump -i eth0"}]
+    },
+    "20": {
+      "title": "Exposición con IP Exclusiva (IP-Aliasing)",
+      "module": "Nivel 4: Troubleshooting y Kernel (Expert Mode)",
+      "content": "Acoplar un puerto mapeado rígidamente solo a una IP lógica en lugar del masivo e ineficiente wildcard 0.0.0.0.",
+      "code": "docker run -d -p 192.168.1.150:80:80 nginx",
+      "steps": [{"t": "Bind Local-IP", "c": "docker run -p IP:Port"}]
+    }
+  }
+}
