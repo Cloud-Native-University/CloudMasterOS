@@ -9,6 +9,7 @@ const ALL_PROJECTS = {
     { id: 'docker', name: 'Docker', cat: 'Containers', logo: 'docker', active: true },
     { id: 'compose', name: 'Docker Compose', cat: 'Orchestration', logo: 'docker', active: true },
     { id: 'docker-networking', name: 'Docker Networking', cat: 'Networking', logo: 'docker', active: true },
+    { id: 'docker-offload', name: 'Docker Offload', cat: 'Cloud/GPU', logo: 'docker', active: true },
     { id: 'docker-sandbox', name: 'Docker Sandbox', cat: 'Security', logo: 'docker', active: true },
     { id: 'docker-models', name: 'Docker Models', cat: 'MLOps', logo: 'docker', active: true },
     { id: 'docker-mcp', name: 'Docker MCP', cat: 'AI Agents', logo: 'docker', active: true },

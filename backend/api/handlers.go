@@ -78,6 +78,8 @@ func SetupRoutes(r *gin.Engine, manager *docker.LabManager) {
 				courseFolder = "cnu_docker_mcp"
 			} else if course == "docker-networking" {
 				courseFolder = "cnu_docker_networking"
+			} else if course == "docker-offload" {
+				courseFolder = "cnu_docker_offload"
 			}
 
 			fullPath := filepath.Join(basePath, courseFolder, "guia.json")
