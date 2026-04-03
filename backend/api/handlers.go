@@ -82,6 +82,8 @@ func SetupRoutes(r *gin.Engine, manager *docker.LabManager) {
 				courseFolder = "cnu_docker_offload"
 			} else if course == "podman" {
 				courseFolder = "cnu_podman"
+			} else if course == "golang" {
+				courseFolder = "cnu_golang"
 			}
 
 			fullPath := filepath.Join(basePath, courseFolder, "guia.json")

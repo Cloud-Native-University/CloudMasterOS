@@ -65,6 +65,8 @@ func (m *LabManager) StartContainer(ctx context.Context, studentName, studentEma
 		courseFolder = "cnu_docker_offload"
 	} else if courseID == "podman" {
 		courseFolder = "cnu_podman"
+	} else if courseID == "golang" {
+		courseFolder = "cnu_golang"
 	}
 	baseContentPath := filepath.Join(rootLabsPath, courseFolder)
 
