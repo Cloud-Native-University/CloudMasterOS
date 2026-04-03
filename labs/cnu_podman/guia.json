@@ -1,1 +1,144 @@
-{"tasks": {}}
+{
+  "tasks": {
+    "1": {
+      "title": "Exploración de Registros",
+      "module": "1. Gestión de Imágenes y Registros",
+      "content": "Configurar /etc/containers/registries.conf para añadir un registro privado y establecer el orden de búsqueda de imágenes, desvinculando al motor de depender exclusivamente del manifest de Docker Hub.",
+      "code": "nano /etc/containers/registries.conf\n# [registries.search]\n# registries = ['quay.io', 'docker.io']\npodman pull nginx",
+      "steps": [{"t": "Configurar Registries", "c": "nano /etc/containers/registries.conf"}]
+    },
+    "2": {
+      "title": "Optimización de Build (Multi-stage)",
+      "module": "1. Gestión de Imágenes y Registros",
+      "content": "Crear un Containerfile utilizando Multi-stage builds para compilar en Go y luego trasladar el binario a una capa scratch, reduciendo dramáticamente el vector de ataque.",
+      "code": "FROM golang:1.20 as build\n...\nFROM scratch\nCOPY --from=build /out/app /app",
+      "steps": [{"t": "Construir Ligero", "c": "podman build -t eco-app ."}]
+    },
+    "3": {
+      "title": "Inspección Profunda",
+      "module": "1. Gestión de Imágenes y Registros",
+      "content": "Utilizar la herramienta 'podman inspect' combinada con Go templates para extraer metadatos puros, como la dirección IP o el punto de anclaje RootFS nativo.",
+      "code": "podman inspect -f '{{.NetworkSettings.IPAddress}}' mi_contenedor",
+      "steps": [{"t": "Filtro Go Template", "c": "podman inspect -f '{{...}}'"}]
+    },
+    "4": {
+      "title": "Contenedores Rootless",
+      "module": "2. Operaciones con Contenedores",
+      "content": "El superpoder nuclear de Podman. Ejecutar contenedores sin el demonio root. Ajusta subuids y subgids para aislar el proceso completamente del host físico.",
+      "code": "usermod --add-subuids 10000-75535 tu_usuario\npodman run -d --name seguro nginx",
+      "steps": [{"t": "Drop Daemon Priveleges", "c": "podman run"}]
+    },
+    "5": {
+      "title": "Persistencia Crítica y UIDs",
+      "module": "2. Operaciones con Contenedores",
+      "content": "Ajuste de persistencia: crea un volumen y despliega PostgreSQL mitigando colisiones de propiedad (UID/GID) entre el mapeo Rootless y los archivos montados.",
+      "code": "podman volume create pgdata\npodman run -d -v pgdata:/var/lib/postgresql/data postgres",
+      "steps": [{"t": "Volumen Rootless", "c": "podman volume create"}]
+    },
+    "6": {
+      "title": "Auto-recuperación (Healthchecks)",
+      "module": "2. Operaciones con Contenedores",
+      "content": "Implementar Healthchecks robustos que deleguen en Podman la responsabilidad de latir e inspeccionar la sanidad interna de un servicio bloqueado.",
+      "code": "podman run -d --health-cmd 'curl -f http://localhost' nginx\npodman inspect --format='{{.State.Health.Status}}' [id]",
+      "steps": [{"t": "Sonda Podman", "c": "podman run --health-cmd"}]
+    },
+    "7": {
+      "title": "Redes Aisladas (CNI / Netavark)",
+      "module": "3. Redes y Comunicación",
+      "content": "Crear un bridge personalizado usando el stack de netavark para acoplar frontend y backend en un sandbox L2 sin que puedan salir ciegamente.",
+      "code": "podman network create interna\npodman run -d --network interna api",
+      "steps": [{"t": "Aislar Stack", "c": "podman network create"}]
+    },
+    "8": {
+      "title": "Publicación de Puertos y Seguridad",
+      "module": "3. Redes y Comunicación",
+      "content": "Blindaje Táctico. Diferenciar agresivamente entre publicar en 127.0.0.1 (seguro local) vs el peligro de 0.0.0.0 que expone la red abierta.",
+      "code": "podman run -d -p 127.0.0.1:8080:80 backend_sensible",
+      "steps": [{"t": "Exponer Seguro", "c": "podman run -p 127.0.0.1:"}]
+    },
+    "9": {
+      "title": "Creación de Pods",
+      "module": "4. Orquestación Local: Pods",
+      "content": "Emular Kubernetes localmente organizando múltiples contenedores en un solo 'Pod' que comparte el mismo Network Namespace y cgroups.",
+      "code": "podman pod create --name mipod -p 8080:80\npodman run -d --pod mipod nginx",
+      "steps": [{"t": "Instanciar Pod", "c": "podman pod create"}]
+    },
+    "10": {
+      "title": "Comunicación en Localhost",
+      "module": "4. Orquestación Local: Pods",
+      "content": "El Sidecar Pattern perfecto. Agrega un logger u opentelemetry a tu Pod y comunícalos usando puramente localhost como si fuesen procesos hermanos.",
+      "code": "podman run -d --pod mipod mi_sidecar\ncurl localhost:80",
+      "steps": [{"t": "Sidecar Connect", "c": "podman run --pod"}]
+    },
+    "11": {
+      "title": "Exportación a Kubernetes",
+      "module": "4. Orquestación Local: Pods",
+      "content": "Generar Infraestructura de la nada. Transmutar el pod operando actualmente a su manifiesto declarativo YAML 100% compatible con K8s.",
+      "code": "podman generate kube mipod > deployment.yaml",
+      "steps": [{"t": "Generar Manifiesto", "c": "podman generate kube"}]
+    },
+    "12": {
+      "title": "Importación desde YAML (Play Kube)",
+      "module": "4. Orquestación Local: Pods",
+      "content": "El inverso. Detener el Pod experimental impulsivo y regenerarlo fríamente de forma determinista devorando el Deployment.yaml de K8s.",
+      "code": "podman pod rm -f mipod\npodman play kube deployment.yaml",
+      "steps": [{"t": "Levantar desde Kube", "c": "podman play kube"}]
+    },
+    "13": {
+      "title": "Generación de Unidades (Systemd)",
+      "module": "5. Integración con el Sistema (Systemd)",
+      "content": "Abandonar el daemon de docker eterno. Crear y anclar un archivo target Unit de systemd para volver al contenedor un servicio formal del Linux OS.",
+      "code": "podman generate systemd --new --name db > /etc/systemd/system/container-db.service\nsystemctl enable --now container-db",
+      "steps": [{"t": "Service Unit", "c": "podman generate systemd"}]
+    },
+    "14": {
+      "title": "Gestión de Ciclo de Vida (Dependencies)",
+      "module": "5. Integración con el Sistema (Systemd)",
+      "content": "Orquestar el host para que Systemd entienda dependencias ordenadas (Requires/After) impidiendo que la APP se levante si postgres no completó el startup.",
+      "code": "nano container-app.service\n# After=container-db.service",
+      "steps": [{"t": "Anclar Dependencia", "c": "systemctl daemon-reload"}]
+    },
+    "15": {
+      "title": "User Namespaces y Mapeo",
+      "module": "6. Seguridad Avanzada",
+      "content": "Romper totalmente la correlación Host-Contenedor mapeando el root simulado al UID 10000 garantizando que el breakout es inútil.",
+      "code": "podman run -d --uidmap 0:10000:5000 alpine",
+      "steps": [{"t": "Map UIDs", "c": "podman run --uidmap"}]
+    },
+    "16": {
+      "title": "Capacidades de Linux (Capabilities)",
+      "module": "6. Seguridad Avanzada",
+      "content": "Principio de Menor Privilegio Cero Trust. Destriparle al contenedor TODO poder y solo insertarle la capacidad quirúrgica para atarse al puerto 80.",
+      "code": "podman run --cap-drop=all --cap-add=NET_BIND_SERVICE web",
+      "steps": [{"t": "Drop-Add Caps", "c": "podman run --cap-drop=all"}]
+    },
+    "17": {
+      "title": "Escaneo de Vulnerabilidades (Skopeo)",
+      "module": "6. Seguridad Avanzada",
+      "content": "Inspeccionar las capas OCI y la cadena de suministro conectando Skopeo y Trivy buscando inyecciones remotas sin bajar toda la imagen entera.",
+      "code": "skopeo inspect docker://nginx\ntrivy image nginx",
+      "steps": [{"t": "Inspección OCI", "c": "skopeo inspect"}]
+    },
+    "18": {
+      "title": "Docker Compatibility Alias",
+      "module": "7. Migración y Herramientas (FinOps)",
+      "content": "Transición silenciosa. Engañar al equipo creando aliases y montando el podman.socket emulando el comportamiento perfecto de docker-compose.",
+      "code": "alias docker=podman\nsystemctl --user enable --now podman.socket\nexport DOCKER_HOST=unix:///run/user/1000/podman/podman.sock",
+      "steps": [{"t": "Fake Daemon", "c": "alias docker=podman"}]
+    },
+    "19": {
+      "title": "Análisis de Capas (History)",
+      "module": "7. Migración y Herramientas (FinOps)",
+      "content": "Poda de Costos. Utilizar el análisis histórico nativo de Podman para auditar capa por capa en qué comando se desperdiciaron gigabytes innecesarios.",
+      "code": "podman history --human --format '{{.Size}}  {{.CreatedBy}}' mi_imagen",
+      "steps": [{"t": "Auditar Capas", "c": "podman history"}]
+    },
+    "20": {
+      "title": "Checkpoint & Restore (CRIU)",
+      "module": "7. Migración y Herramientas (FinOps)",
+      "content": "Congelar el tiempo y la RAM. Exportar la memoria de una simulación de 3 horas directas a un tarball para restaurarla milisegundos después en otro host.",
+      "code": "podman container checkpoint mi_simulador -e simulador.tar\npodman container restore -i simulador.tar",
+      "steps": [{"t": "Congelar Estado", "c": "podman container checkpoint"}]
+    }
+  }
+}
