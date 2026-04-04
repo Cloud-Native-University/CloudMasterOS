@@ -1,1 +1,144 @@
-{"tasks": {}}
+{
+  "tasks": {
+    "1": {
+      "title": "El Clasificador de Tipos",
+      "module": "Bloque 1: Fundamentos y Lógica Core",
+      "content": "Comprender el tipado fuerte y variables. Crea un programa que declare `int`, `float64`, `string`, `bool` y realice un casting explícito para emular la precisión.",
+      "code": "var entero int = 42\nflotante := float64(entero)\nfmt.Printf(\"Tipo: %T\\n\", flotante)",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "2": {
+      "title": "Calculadora de Tasas con Switch",
+      "module": "Bloque 1: Fundamentos y Lógica Core",
+      "content": "Aplica impuestos según país con Switch. Recibe un string (ej: 'ES') y retorna el monto final penalizando o beneficiando con fallthrough o default case.",
+      "code": "switch pais {\ncase \"ES\":\n  tasa = 1.21\ndefault:\n  tasa = 1.0\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "3": {
+      "title": "El Analizador de Slices",
+      "module": "Bloque 1: Fundamentos y Lógica Core",
+      "content": "Dinámicos por excelencia. Crea un slice, añade 5 números con `append`, y saca una rebanada (reslice) de los elementos del centro (índices 1 a 3).",
+      "code": "numeros := []int{1, 2}\nnumeros = append(numeros, 3, 4, 5)\ncentro := numeros[1:4]",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "4": {
+      "title": "Contador de Palabras con Maps",
+      "module": "Bloque 1: Fundamentos y Lógica Core",
+      "content": "Construye un mapa `string:int`. Itera sobre las palabras de un Array y aumenta la frecuencia para cada llave. Imprime el mapa resultante.",
+      "code": "freq := make(map[string]int)\nfor _, p := range palabras {\n  freq[p]++\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "5": {
+      "title": "Punteros y Mutabilidad",
+      "module": "Bloque 1: Fundamentos y Lógica Core",
+      "content": "Compara modificar por valor vs por referencia. Pasa la dirección de memoria `&var` a una func y muta su valor con `*pointer = \"nuevo\"`.",
+      "code": "func mutar(p *string) {\n  *p = \"Modificado en la sombra\"\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "6": {
+      "title": "Sistema de Perfiles con Structs",
+      "module": "Bloque 2: Estructuras y Composición",
+      "content": "Anida Datos: Crea `Address` dentro de un struct `User`. Construye un objeto e inicialízalo para estructurar modelos complejos de base de datos.",
+      "code": "type Address struct { Ciudad string }\ntype User struct {\n  Name string\n  Addr Address\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "7": {
+      "title": "Simulación de Inventario",
+      "module": "Bloque 2: Estructuras y Composición",
+      "content": "Receptores. Añade métodos a un Struct. Cambia el stock haciendo un método *Receptor de Puntero* y comprueba cómo afecta a la instancia global.",
+      "code": "func (p *Product) ModificarStock(s int) {\n  p.Stock += s\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "8": {
+      "title": "El Contrato de Interfaces",
+      "module": "Bloque 2: Estructuras y Composición",
+      "content": "Duck Typing. Crea la interfaz `Shape` con `Area()`. Haz que *Circle* y *Rectangle* cumplan el contrato y ejecútalo mediante Polimorfismo puro.",
+      "code": "type Shape interface {\n  Area() float64\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "9": {
+      "title": "Composición sobre Herencia",
+      "module": "Bloque 2: Estructuras y Composición",
+      "content": "Go mata las jerarquías tradicionales. Embebe el struct `Vehicle` dentro de `ElectricCar` y accede mágicamente a los campos anidados.",
+      "code": "type ElectricCar struct {\n  Vehicle // Promoción de campos\n  Bateria int\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "10": {
+      "title": "Manejo de Errores Custom",
+      "module": "Bloque 2: Estructuras y Composición",
+      "content": "Haz una división y retorna `(float64, error)`. Si es entre 0, escupe un `errors.New`. Entiende cómo atrapar y evadir `if err != nil`.",
+      "code": "if divisor == 0 {\n  return 0, errors.New(\"kaboom\")\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "11": {
+      "title": "Mi Primera Goroutine",
+      "module": "Bloque 3: Concurrencia (El Corazón de Go)",
+      "content": "Dispara 5 hilos paralelos (Goroutines). Pon un sleep de bloqueo en el thread Main y observa cómo se imprimen desordenadamente en el fondo.",
+      "code": "for i:=0; i<5; i++ {\n  go imprimir(i)\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "12": {
+      "title": "Sincronización con WaitGroup",
+      "module": "Bloque 3: Concurrencia (El Corazón de Go)",
+      "content": "Mata el sleep rústico. Invoca a `sync.WaitGroup`, suma Tareas e invoca `.Done()`. El thread principal debe bloquearse en `.Wait()`.",
+      "code": "var wg sync.WaitGroup\nwg.Add(1)\ngo func() { defer wg.Done() }()\nwg.Wait()",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "13": {
+      "title": "Canales (Channels) Mágicos",
+      "module": "Bloque 3: Concurrencia (El Corazón de Go)",
+      "content": "Pasa datos entre hilos. Abre un `make(chan int)`. Una goroutine escupe números en el tubo y el Main los ingiere y procesa.",
+      "code": "ch := make(chan int)\ngo func() { ch <- 42 }()\nfmt.Println(<-ch)",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "14": {
+      "title": "El Patrón Worker Pool",
+      "module": "Bloque 3: Concurrencia (El Corazón de Go)",
+      "content": "Despliega a 3 esclavos digitales (Workers). Avienta 10 tareas a un Canal bufferizado. Analiza cómo las toman equitativamente de la cola.",
+      "code": "func worker(id int, jobs <-chan int) {\n  for j := range jobs { ... }\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "15": {
+      "title": "Control de Tiempos con Select",
+      "module": "Bloque 3: Concurrencia (El Corazón de Go)",
+      "content": "Multiplexación de eventos. Escucha los Canales A y B simultáneamente, y añade `time.After` para reventar el proceso si hubo Timeout.",
+      "code": "select {\ncase res := <- ch:\ncase <- time.After(2*time.Second):\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "16": {
+      "title": "JSON Marshalling",
+      "module": "Bloque 4: Aplicaciones Reales",
+      "content": "Construye un Struct usando Struct Tags (etiquetas) y pásalo por `json.Marshal()`. Observa la cadena Byte resultante.",
+      "code": "type User struct {\n  Name string `json:\"nombre_usuario\"`\n}",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "17": {
+      "title": "Cliente HTTP Nativo",
+      "module": "Bloque 4: Aplicaciones Reales",
+      "content": "Pide datos externos puros a jsonplaceholder. Usa `http.Get()`, cierra el `defer Body.Close()` y unmarshallealo a un modelo interno local.",
+      "code": "resp, err := http.Get(\"https://api...\")\ndefer resp.Body.Close()",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "18": {
+      "title": "Levantar un Web Server Básico",
+      "module": "Bloque 4: Aplicaciones Reales",
+      "content": "Crea una ruta en `net/http` que escuche en puerto :8080. Añade un handler simple y crea un middleware de Logging interceptor de Request.",
+      "code": "http.HandleFunc(\"/\", miHandler)\nhttp.ListenAndServe(\":8080\", nil)",
+      "steps": [{"t": "Run Go", "c": "go run main.go"}]
+    },
+    "19": {
+      "title": "TDD y Unit Tests",
+      "module": "Bloque 4: Aplicaciones Reales",
+      "content": "Desarrolla el archivo main_test.go, invoca desde el paquete testing y escribe un `t.Errorf()` validando un comportamiento exacto.",
+      "code": "func TestDivision(t *testing.T) {\n  // t.Errorf(\"Falló la división\")\n}",
+      "steps": [{"t": "Run Test", "c": "go test -v"}]
+    },
+    "20": {
+      "title": "CLI Tool con Flags",
+      "module": "Bloque 4: Aplicaciones Reales",
+      "content": "Parseador de consola. Declara `flag.String()` y recíbelo por argumentos de Terminal emulando los famosos command lines utilities de Linux.",
+      "code": "name := flag.String(\"name\", \"User\", \"Tu nombre\")\nflag.Parse()",
+      "steps": [{"t": "Run Go", "c": "go run main.go --name Gopher"}]
+    }
+  }
+}

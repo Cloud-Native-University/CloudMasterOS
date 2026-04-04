@@ -1,1 +1,144 @@
-{"tasks": {}}
+{
+  "tasks": {
+    "1": {
+      "title": "Navegación Relativa/Absoluta",
+      "module": "Bloque 1: Manipulación de Archivos",
+      "content": "Pasea por el kernel. Sal de tu raíz hasta /etc usando rutas absolutas, baja un nivel relacional con `..` y vuelve mágicamente al Home con un truco universal.",
+      "code": "cd /etc\ncd ../\ncd ~",
+      "steps": [{"t": "Moverse por Bash", "c": "cd /"}]
+    },
+    "2": {
+      "title": "El Arte de listar (ls)",
+      "module": "Bloque 1: Manipulación de Archivos",
+      "content": "Saca la radiografía del sistema. Muestra fantasmas (ocultos), lee dueños, permisos de 10 bytes y ordénalos por tamaño en escala humana M/G.",
+      "code": "ls -laS -h",
+      "steps": [{"t": "Listar Archivos", "c": "ls -laSh"}]
+    },
+    "3": {
+      "title": "Gestor de Árbol (mkdir)",
+      "module": "Bloque 1: Manipulación de Archivos",
+      "content": "Crea 3 carpetas anidadas en un solo tiro (padre, hijo, nieto) sin que truene y planta un archivo en blanco en el núcleo.",
+      "code": "mkdir -p proyecto/src/data\ntouch proyecto/src/data/db.txt",
+      "steps": [{"t": "Crear y Plantar", "c": "mkdir -p"}]
+    },
+    "4": {
+      "title": "Búsqueda Profunda (find)",
+      "module": "Bloque 1: Manipulación de Archivos",
+      "content": "Apunta el radar. Localiza solo logs (*.log) dentro de /var ignorando cosas que pesen menos de 5MB y que tengan vida no mayor a 7 días.",
+      "code": "find /var -type f -name \"*.log\" -size +5M -mtime -7",
+      "steps": [{"t": "Buscar con Criterios", "c": "find"}]
+    },
+    "5": {
+      "title": "Escaneo Térmico (grep)",
+      "module": "Bloque 2: Pipes & Filtros",
+      "content": "Busca dentro de la sangre de los archivos. Pide a `grep` que busque ignorando case-sensitive una palabra e imprime desde qué línea nació.",
+      "code": "grep -rin \"error\" /var/log/",
+      "steps": [{"t": "Filtrar Contenidos", "c": "grep -rin"}]
+    },
+    "6": {
+      "title": "Despedazador de Columnas (awk)",
+      "module": "Bloque 2: Pipes & Filtros",
+      "content": "Ahorra tiempo. Imprime solamente al usuario y la ruta del binario desde `/etc/passwd` destrozando su delimitador nativo `:`. ",
+      "code": "awk -F':' '{print $1 \" - \" $7}' /etc/passwd",
+      "steps": [{"t": "Partir Registros", "c": "awk -F"}]
+    },
+    "7": {
+      "title": "Edición in-place (sed)",
+      "module": "Bloque 2: Pipes & Filtros",
+      "content": "Sed es dios. Modifica la palabra 'localhost' por '0.0.0.0' en un archivo directamente sin abrir ningún visualizador.",
+      "code": "sed -i 's/localhost/0.0.0.0/g' config.txt",
+      "steps": [{"t": "Editar Streams", "c": "sed -i"}]
+    },
+    "8": {
+      "title": "Encadenamiento RAM (Pipes)",
+      "module": "Bloque 2: Pipes & Filtros",
+      "content": "El `|` pipe transfiere la salida. Haz un dumpeo de Memoria, ordénalo, y aplácale un cortador Head para ver a los 5 mayores glotones.",
+      "code": "ps aux | sort -rn -k 4 | head -n 5",
+      "steps": [{"t": "Canalizar Outputs", "c": "ps aux | sort"}]
+    },
+    "9": {
+      "title": "La Tabla Octal (chmod)",
+      "module": "Bloque 3: Seguridad y Accesos",
+      "content": "Comprende el `7-4-4`. Bloquealo usando base octal para que el resto lea pero solo tú lo modifiques. Luego haz un hot-fix simbólico dándole +x a ti.",
+      "code": "chmod 744 script.sh\nchmod u+x script.sh",
+      "steps": [{"t": "Ajustar Permisos", "c": "chmod"}]
+    },
+    "10": {
+      "title": "Dueño Absoluto (chown)",
+      "module": "Bloque 3: Seguridad y Accesos",
+      "content": "Arranca el root. Asigna brutalmente desde la cima del directorio un cambio de Posesión (Usuario:Grupo) hacia abajo (recursivo).",
+      "code": "sudo chown -R www-data:www-data /var/www/html",
+      "steps": [{"t": "Transferir Propiedad", "c": "chown -R"}]
+    },
+    "11": {
+      "title": "Escalada Quirúrgica (sudo)",
+      "module": "Bloque 3: Seguridad y Accesos",
+      "content": "SuperUser DO. Inyecta poder solo para un comando fugaz asaltando una zona de kernel `/etc/hosts` sin ceder el shell crudo a Root permanente.",
+      "code": "sudo nano /etc/hosts",
+      "steps": [{"t": "Elevar Status Límite", "c": "sudo"}]
+    },
+    "12": {
+      "title": "Control de Tiempos (bg/fg)",
+      "module": "Bloque 4: Procesos & CPU",
+      "content": "El Arte de la multitarea CLI. Lanza un comando lento (sleep), congélealo `Ctrl+Z`, empújalo a las sombras `bg` y tráelo a la luz con `fg`.",
+      "code": "sleep 300\n# ctrl+z\nbg 1\nfg 1",
+      "steps": [{"t": "Suspender Tareas", "c": "bg / fg"}]
+    },
+    "13": {
+      "title": "El Asesino de Procesos (kill)",
+      "module": "Bloque 4: Procesos & CPU",
+      "content": "Míralo correr con `htop`. Apunta al PID Zombie y mándale la guadaña extrema -9 (SIGKILL) de la que no hay retorno ni limpieza.",
+      "code": "htop\nkill -9 [PID]",
+      "steps": [{"t": "SIGKILL Agresivo", "c": "kill -9"}]
+    },
+    "14": {
+      "title": "Sonda de Disco (du/df)",
+      "module": "Bloque 4: Procesos & CPU",
+      "content": "Rastreador de basura. Escanea todos los cilindros bajo `root /` cortando el árbol de escaneo en 1 de profundidad y ver quién devora el HDD.",
+      "code": "sudo du -h --max-depth=1 / | sort -hr",
+      "steps": [{"t": "Estadística Física", "c": "du -h"}]
+    },
+    "15": {
+      "title": "Rastreo de Rutas (traceroute/netstat)",
+      "module": "Bloque 5: Redes",
+      "content": "Caza qué puertos locales tienes vivos y dispara un radar a Google.com para ver cada router físico que salta tu paquete por el mundo.",
+      "code": "ss -tulpn\ntraceroute google.com",
+      "steps": [{"t": "Auditar Saltos", "c": "traceroute"}]
+    },
+    "16": {
+      "title": "Sincronizador Universal (rsync)",
+      "module": "Bloque 5: Redes",
+      "content": "El rey de la transferencia. Usa RSYNC para enviar o sincronizar sin reescribir la data pesada por medio de Secure Shell (SSH).",
+      "code": "rsync -avzP proyecto/ usuario@host:/var/www/",
+      "steps": [{"t": "Copiar sobre SSH", "c": "rsync -avzP"}]
+    },
+    "17": {
+      "title": "Atractor Fantasma (curl/wget)",
+      "module": "Bloque 5: Redes",
+      "content": "Tráete la ISO enorme de la web sin navegador. Bájalo renombrándolo en el vuelo para que sea un zip listo.",
+      "code": "wget -O paquete.zip http://sitio.com/arch.zip\ncurl -o paquete.zip http...",
+      "steps": [{"t": "Descargar Bloque", "c": "wget -O"}]
+    },
+    "18": {
+      "title": "Entorno Mutante (Env Vars)",
+      "module": "Bloque 6: Automatización",
+      "content": "Imprime todas las Constantes del core con `env`. Muta tu Bash Profile añadiendo un secreto al `~/.bashrc` que persistirá para siempre.",
+      "code": "echo 'export API_KEY=\"xyz123\"' >> ~/.bashrc\nsource ~/.bashrc",
+      "steps": [{"t": "Persistir Variable", "c": "export"}]
+    },
+    "19": {
+      "title": "If-Existes Creador (Bash Script)",
+      "module": "Bloque 6: Automatización",
+      "content": "El Shell Script clásico. Crea `backup.sh`, haz un if: `if [ ! -d \"dir\" ]`. Si sí existe, lanza un `tar -czvf` letal compactador de tarball gzip.",
+      "code": "if [ -d \"datos\" ]; then\n  tar -czvf bk.tar.gz datos/\nfi",
+      "steps": [{"t": "Programar Script", "c": "bash script.sh"}]
+    },
+    "20": {
+      "title": "Demonio Espacial (Cronjob)",
+      "module": "Bloque 6: Automatización",
+      "content": "Haz que algo se ejecute solo, eternamente cada viernes a las 11:59PM inyectando la firma exacta al Cron Daemon del Linux Host.",
+      "code": "crontab -e\n59 23 * * 5 /home/scripts/backup.sh",
+      "steps": [{"t": "Programar Job", "c": "crontab -e"}]
+    }
+  }
+}

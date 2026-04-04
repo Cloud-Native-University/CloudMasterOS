@@ -1,1 +1,144 @@
-{"tasks": {}}
+{
+  "tasks": {
+    "1": {
+      "title": "El Formateador de Texto (f-strings)",
+      "module": "Bloque 1: Sintaxis y Datos",
+      "content": "Domina la limpieza de Strings en un solo bloque. Toma parámetros y usa `.strip()`, `.upper()` y f-strings para inyectarlos limpiamente en un párrafo descriptivo.",
+      "code": "nombre = input().strip().title()\nprint(f\"Hola, soy {nombre} y tengo {edad} años.\")",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "2": {
+      "title": "Validador Dinámico Todo Objeto",
+      "module": "Bloque 1: Sintaxis y Datos",
+      "content": "Usa un arreglo mezclado de Listas, Diccionarios y Enteros (El poder iterativo de una List tipada floja). Imprime tipo exacto `type()`.",
+      "code": "mi_lista = [1, \"Hola\", {'a': 1}]\nfor item in mi_lista:\n    print(type(item))",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "3": {
+      "title": "El Filtro Funcional (Comprehensions)",
+      "module": "Bloque 1: Sintaxis y Datos",
+      "content": "Pythonica al máximo. Crea una lista de múltiplos simultáneos de 3 y 5 en una sola línea elegante de código de compresión.",
+      "code": "res = [x for x in range(1, 51) if x % 3 == 0 and x % 5 == 0]",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "4": {
+      "title": "Diccionarios de Alta Frecuencia",
+      "module": "Bloque 1: Sintaxis y Datos",
+      "content": "Manejo de estados con Keys. Cuenta palabras y asiganles su conteo. Usar `.get()` es vital para inicializar Keys si no existen previamente.",
+      "code": "freq = {}\nfor palabra in frase.split():\n    freq[palabra] = freq.get(palabra, 0) + 1",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "5": {
+      "title": "Control Defensivo: Try-Except",
+      "module": "Bloque 1: Sintaxis y Datos",
+      "content": "Haz que tu código resista al usuario inyectando veneno. Esquiva ataques previniendo ZeroDivisionError o ValueError.",
+      "code": "try:\n    res = int(a) / int(b)\nexcept ZeroDivisionError:\n    print(\"Div por cero\")",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "6": {
+      "title": "Calculadora Multiparamétrica (*args)",
+      "module": "Bloque 2: Funciones y Módulos",
+      "content": "Paso de tuplas ilimitadas. Empaqueta el infinito dentro de `*args` para hacer una sumatoria colosal de números sin forzar una Lista estática.",
+      "code": "def sumar_todo(*args):\n    return sum(args)",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "7": {
+      "title": "Abstracción Funcional (Lambda/Map)",
+      "module": "Bloque 2: Funciones y Módulos",
+      "content": "Iteración cruda sobre colecciones. En lugar de un `for` lento, aplica mutaciones masivas con `map()` sobre `lambda` a nivel núcleo en C.",
+      "code": "euros = list(map(lambda p: p * 0.9, dolares))\naltos = list(filter(lambda p: p > 100, euros))",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "8": {
+      "title": "El Decorador de Alta Orden",
+      "module": "Bloque 2: Funciones y Módulos",
+      "content": "Modifica el comportamiento en caliente. Crea `@medir_tiempo` que envuelva y calcule el `time.time()` de inicio y fin de una función envuelta.",
+      "code": "def decorador(func):\n    def wrapper(*a, **kw):\n        return func(*a, **kw)\n    return wrapper",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "9": {
+      "title": "Generadores Puros (yield)",
+      "module": "Bloque 2: Funciones y Módulos",
+      "content": "Control de memoria asíncrono. Emite el conteo de *Fibonacci* a demanda en vez de destruir la RAM instanciando todos juntos. Usa next().",
+      "code": "def fibonacci():\n    yield a\n\ngen = fibonacci()",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "10": {
+      "title": "Modelado Orientado (POO Privacity)",
+      "module": "Bloque 3: POO Avanzada",
+      "content": "Emula privacidad encasillando las finanzas en getters y empleando `__variable` para disparar el *Name Mangling* evitando inyecciones exteriores.",
+      "code": "class Cuenta:\n    def __init__(self):\n        self.__balance = 0",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "11": {
+      "title": "Herencia Nuclear y Polimorfismo",
+      "module": "Bloque 3: POO Avanzada",
+      "content": "Evita escribir código dos veces. Que Gerente devuelva un bono `x2` y Empleado `x1` usando sus overrides base en una sola clase iteradora.",
+      "code": "class Gerente(Empleado):\n    def calcular_bono(self):\n        return self.salario * 0.2",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "12": {
+      "title": "Los Dunder Methods Mágicos",
+      "module": "Bloque 3: POO Avanzada",
+      "content": "Comportamiento Nativo. Haz que `len(tu_objeto)` devuelva una propiedad inyectándole la sobrecarga en el backend interno `__len__`.",
+      "code": "def __len__(self):\n    return len(self.canciones)",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "13": {
+      "title": "Manipulación Cruda y Contextos",
+      "module": "Bloque 4: Datos",
+      "content": "Flujo de Archivos Defensivo. Emplea la sentencia `with open()` para que los descriptors se autocierren previniendo Memory/FD Leaks fatales.",
+      "code": "with open('file.txt', 'r') as f:\n    texto = f.read()",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "14": {
+      "title": "CSV Analyzer Nativo",
+      "module": "Bloque 4: Datos",
+      "content": "Destripa una Data con `DictReader()`. Lee campos, extrae y suma sin tener que importar pandas.",
+      "code": "import csv\nwith open('datos.csv') as arch:\n    lector = csv.DictReader(arch)",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "15": {
+      "title": "Conector API (Requests)",
+      "module": "Bloque 4: Datos",
+      "content": "Haz un GET Request con `requests`, atrapa los JSON payloads y modelalos hacia tu consola como si fuese BBDD viva.",
+      "code": "import requests\nresp = requests.get(\"https://pokeapi...\")\ndata = resp.json()",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "16": {
+      "title": "Cacería Web (Soup Scraping)",
+      "module": "Bloque 4: Datos",
+      "content": "Inyección HTML Parser. Extrae nodos DOM (Títulos h1/h2) ignorando el caos web frontend.",
+      "code": "from bs4 import BeautifulSoup\nsoup = BeautifulSoup(html, 'html.parser')",
+      "steps": [{"t": "Ejecutar Script", "c": "python main.py"}]
+    },
+    "17": {
+      "title": "Blindaje PIP: Entornos Venv",
+      "module": "Bloque 5: Entornos PRO",
+      "content": "Aísla conflictos letales usando `python -m venv`. Descubre cómo el Shell redirige tu path al clon interno y luego haz `pip freeze`.",
+      "code": "python -m venv mi_entorno\nsource mi_entorno/bin/activate",
+      "steps": [{"t": "Activar Python Env", "c": "source venv/bin/activate"}]
+    },
+    "18": {
+      "title": "Big Data: El Poder de Pandas",
+      "module": "Bloque 5: Entornos PRO",
+      "content": "Pasa del bucle FOR. Extrae y agrupa el promedio gigantesco usando `df.groupby()` con la potencia matemática vecotrizada de Numpy base.",
+      "code": "import pandas as pd\ndf = pd.read_csv(\"data.csv\")\nprint(df.groupby(\"col\").mean())",
+      "steps": [{"t": "Ejecutar Pandas", "c": "python main.py"}]
+    },
+    "19": {
+      "title": "Microservicio Serverless Backend",
+      "module": "Bloque 5: Entornos PRO",
+      "content": "Inyecta un daemon http en vivo exponiendo una URI JSON cruda y expónselo al mundo sin Nginx.",
+      "code": "from flask import Flask\napp = Flask(__name__)\n\n@app.route('/')\ndef raiz(): return {'msj':'hola'}",
+      "steps": [{"t": "Run Flask Server", "c": "flask run"}]
+    },
+    "20": {
+      "title": "Escuadrón QA: Pytest",
+      "module": "Bloque 5: Entornos PRO",
+      "content": "Protege tus refactorings. Emite 3 Pruebas de QA agresivas sobre una función con `assert()` puro y visualiza en la terminal su validación.",
+      "code": "def test_sumar():\n    assert sumar(2,2) == 4",
+      "steps": [{"t": "Disparar Pruebas", "c": "pytest main.py"}]
+    }
+  }
+}
