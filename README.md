@@ -133,11 +133,29 @@ El orquestador lo encontrará, lo montará en el contenedor del estudiante y lo 
 
 ---
 
-## 💎 Módulos de la Comunidad (En Desarrollo):
-- **cnu_docker**: Contenerización esencial.
-- **cnu_podman**: Seguridad rootless.
-- **cnu_linux**: Guía de supervivencia SysAdmin.
-- **cnu_openshift**: Orquestación empresarial.
+## 🏆 Laboratorios Completados y Disponibles (100% Ready)
+
+El sistema cuenta con los siguientes laboratorios exhaustivos de 20 fases integrados y listos para ser ejecutados desde la Interfaz Web interactiva:
+
+### Fundamentales e Ingeniería Base
+- 🐧 **Linux Kernel & CLI** (`cnu_linux`): Navegación profunda en kernel, tuberías avanzadas, gestión cron/systemd y control absoluto de permisos (SysAdmin Level).
+- 🐹 **Golang Concurrency** (`cnu_golang`): Masterclass de programación. Desde Punteros hasta Goroutines, manejo mutek y Channels. Integra un entorno real con `gopls` y `dlv`.
+- 🐍 **Python Data & Backend** (`cnu_python`): Desde List Comprehensions, Decoradores y Contexts, hasta despliegue de Microservicios en Flask y análisis numérico con Pandas. Incorpora Autocompletado `ms-python` y Pytest.
+
+### Operaciones Locales y Rootless
+- 🐳 **Docker Fundamentals** (`cnu_docker`): Gestión esencial del motor, empaquetado y control de ciclo de vida básico.
+- 🦭 **Podman Rootless** (`cnu_podman`): Reemplazo avanzado de Docker. Escalada de privilegios evadida, contenedores sin root user, módulos Systemd transitorios y exportación a Pods YAML Kube.
+
+### Advanced Docker & Orquestación
+- 🚢 **Docker Compose** (`cnu_docker_compose`): Orquestación multi-contenedor nativa en Localhost, dependencias de startup y healthchecks.
+- 🌐 **Docker Networking** (`cnu_docker_networking`): Ruteo pesado. Segmentación de capas DB/App, Túneles VXLAN, Ingress Mesh Swarm, DNS falso y simulación TC de Packet Loss.
+- 🛡️ **Docker Sandbox** (`cnu_docker_sandbox`): Operaciones quirúrgicas en Cgroups. ReadOnly FileSystems, Cap_Drops al límite, Privileged Escalation testing y User Namespace mappings.
+- 🌩️ **Docker Offload** (`cnu_docker_offload`): Infraestructura Cloud moderna. VDI Optimizations, Caché de Memoria Remota y GPU Offload transparente.
+- 🧠 **Docker Models** (`cnu_docker_models`): Empaquetando Inteligencia Artificial (MLOps). Serving en FastAPI, serialización binaria y Multi-Stage para arquitecturas HuggingFace sin colapso.
+- 🤖 **Docker MCP (AI Agents)** (`cnu_docker_mcp`): Despliegue del protocolo estandarizado de IA. Bridging de Tool-Calling autónomo bajo ambientes herméticos Dockerizados.
+
+### Graduación Cloud Native
+- ☸️ **Kubernetes (K3S)** (`cnu_kubernetes`): Adéntrate en el control master. Levantar Despliegues, ConfigMaps, Ingress Controllers y escalado Horizontal.
 
 ---
 
